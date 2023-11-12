@@ -1,3 +1,4 @@
+using Lingonberry.Api.UseCases.Excel.ExcelParser;
 using Lingonberry.Api.UseCases.Users.AuthenticateUser.LoginUser;
 
 namespace Lingonberry.Api.Web.Infrastructure.DependencyInjection;
