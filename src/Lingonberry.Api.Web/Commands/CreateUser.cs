@@ -59,19 +59,19 @@ public class CreateUser
     /// </summary>
     public async Task OnExecuteAsync()
     {
-        var user = new User
-        {
-            Email = Email,
-            UserName = Email,
-            EmailConfirmed = true,
-            FirstName = FirstName,
-            LastName = LastName
-        };
-        var result = await userManager.CreateAsync(user, Password);
-        logger.LogInformation($"User creation result: {result}.");
-        if (result.Succeeded)
-        {
-            logger.LogInformation($"User id: {user.Id}.");
-        }
+        //var user = new User
+        //{
+        //    Email = Email,
+        //    UserName = Email,
+        //    EmailConfirmed = true,
+        //    FirstName = FirstName,
+        //    LastName = LastName
+        //};
+        //var result = await userManager.CreateAsync(user, Password);
+        //logger.LogInformation($"User creation result: {result}.");
+        //if (result.Succeeded)
+        //{
+        //    logger.LogInformation($"User id: {user.Id}.");
+        //}
     }
 }
