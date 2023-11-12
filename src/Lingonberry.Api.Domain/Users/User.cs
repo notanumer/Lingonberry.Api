@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Lingonberry.Api.Domain.Locations;
 using Microsoft.AspNetCore.Identity;
 using Saritasa.Tools.Common.Utils;
 
@@ -22,6 +23,38 @@ public class User : IdentityUser<int>
     [MaxLength(255)]
     [Required]
     required public string LastName { get; set; }
+
+    /// <summary>
+    /// Patronymic.
+    /// </summary>
+    [MaxLength(255)]
+    public string? Patronymic { get; set; }
+
+    /// <summary>
+    /// Phone number.
+    /// </summary>
+    [MaxLength(11)]
+    public override string? PhoneNumber { get; set; }
+
+    /// <summary>
+    /// User salary.
+    /// </summary>
+    required public int Salary { get; set; }
+
+    /// <summary>
+    /// User position in company.
+    /// </summary>
+    public string? Position { get; set; }
+
+    /// <summary>
+    /// Is user vacancy.
+    /// </summary>
+    public bool IsVacancy { get; set; }
+
+    /// <summary>
+    /// Work type of user.
+    /// </summary>
+    public WorkType WorkType { get; set; }
 
     /// <summary>
     /// Full name, concat of first name and last name.
@@ -53,4 +86,16 @@ public class User : IdentityUser<int>
     /// Indicates when the user was removed.
     /// </summary>
     public DateTime? RemovedAt { get; set; }
+
+    public int? DepartmentId { get; set; }
+
+    public Department? Department { get; set; }
+
+    required public int DivisionId { get; set; }
+
+    public Division? Division { get; set; }
+
+    public int? GroupId { get; set; }
+
+    public Group? Group { get; set; }
 }
