@@ -25,23 +25,6 @@ public class ExcelParserCommandHandler : IRequestHandler<ExcelParserCommand>
         this.dbContext = dbContext;
     }
 
-    // private void UploadData(Dictionary<string, Division> hashDivision, Dictionary<string, Department> hashDepartment,
-    //     Dictionary<string, Group> hashGroup)
-    // {
-    //     foreach (var department in dbContext.Set<Department>())
-    //     {
-    //         hashDepartment.Add(department.Name, department);
-    //     }
-    //     foreach (var division in dbContext.Set<Division>())
-    //     {
-    //         hashDivision.Add(division.Name, division);
-    //     }
-    //     foreach (var group in dbContext.Set<Group>())
-    //     {
-    //         hashGroup.Add(group.Name, group);
-    //     }
-    // }
-
     /// <inheritdoc />
     public async Task Handle(ExcelParserCommand request, CancellationToken cancellationToken)
     {
@@ -58,24 +41,8 @@ public class ExcelParserCommandHandler : IRequestHandler<ExcelParserCommand>
 
         var countRow = ws.Rows().Count();
         var users = new List<User>();
-        for (var i = 3; i < 20; i++)
+        for (var i = 3; i < countRow; i++)
         {
-            var location = new Location() { Name = ws.Cell($"C{i}").GetValue<string>() };
-
-            var division = new Division { Name = ws.Cell($"D{i}").GetValue<string>() };
-
-            var department = new Department
-            {
-                Name = ws.Cell($"E{i}").GetValue<string>(),
-                Division = string.IsNullOrEmpty(division.Name) ? null : division
-            };
-
-            var group = new Group
-            {
-                Name = ws.Cell($"F{i}").GetValue<string>(),
-                Department = string.IsNullOrEmpty(department.Name) ? null : department
-            };
-
             var user = new User
             {
                 CreatedAt = DateTime.Now,
@@ -104,62 +71,48 @@ public class ExcelParserCommandHandler : IRequestHandler<ExcelParserCommand>
                     case 'C':
                         if (!hashLocation.ContainsKey(value))
                         {
-                            if (division.Locations == null)
-                            {
-                                division.Locations = new List<Location>() { location };
-                            }
-                            else
-                            {
-                                division.Locations.Add(location);
-                            }
-                            hashLocation.Add(value, location);
-                            user.Location = location;
+                            var l = new Location() { Name = value };
+                            hashLocation.Add(value, l );
+                            user.Location = l;
                         }
                         else
                         {
-                            if (division.Locations == null)
-                            {
-                                division.Locations = new List<Location>() { hashLocation[value] };
-                            }
-                            else
-                            {
-                                division.Locations.Add(hashLocation[value]);
-                            }
                             user.Location = hashLocation[value];
                         }
                         break;
                     case 'D':
                         if (!hashDivision.ContainsKey(value))
                         {
-                            if (hashLocation[location.Name].Divisions == null)
-                            {
-                                hashLocation[location.Name].Divisions = new List<Division>() { division };
-                            }
-                            else
-                            {
-                                hashLocation[location.Name].Divisions.Add(division);
-                            }
-                            hashDivision.Add(value, division);
-                            user.Division = division;
+                            var d = new Division { Name = value };
+                            user.Division = d;
+                            hashDivision.Add(value, d);
                         }
                         else
                         {
-                            if (hashLocation[location.Name].Divisions == null)
-                            {
-                                hashLocation[location.Name].Divisions = new List<Division>() { hashDivision[value] };
-                            }
-                            else
-                            {
-                                hashLocation[location.Name].Divisions.Add(hashDivision[value]);
-                            }
                             user.Division = hashDivision[value];
                         }
+
+                        if (user.Location!.Divisions == null)
+                        {
+                            user.Location!.Divisions = new List<Division> { user.Division };
+                        }
+                        else
+                        {
+                            user.Location!.Divisions.Add(user.Division);
+                        }
+
+                        user.Division.Locations.Add(user.Location);
                         break;
                     case 'E':
                         if (!hashDepartment.ContainsKey(value))
                         {
-                            hashDepartment.Add(value, department);
-                            user.Department = department;
+                            var d = new Department
+                            {
+                                Name = value,
+                                Division = user.Division
+                            };
+                            user.Department = d;
+                            hashDepartment.Add(value, d);
                         }
                         else
                         {
@@ -169,8 +122,13 @@ public class ExcelParserCommandHandler : IRequestHandler<ExcelParserCommand>
                     case 'F':
                         if (!hashGroup.ContainsKey(value))
                         {
-                            hashGroup.Add(value, group);
+                            var group = new Group
+                            {
+                                Name = value,
+                                Department = user.Department
+                            };
                             user.Group = group;
+                            hashGroup.Add(value, group);
                         }
                         else
                         {

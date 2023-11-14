@@ -12,5 +12,5 @@ public class Division
 
     public ICollection<User> Users { get; set; } = new List<User>();
 
-    public ICollection<Location>? Locations { get; set; }
+    public ICollection<Location> Locations { get; set; } = new List<Location>();
 }
