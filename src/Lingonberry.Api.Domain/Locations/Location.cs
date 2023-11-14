@@ -1,4 +1,6 @@
-﻿namespace Lingonberry.Api.Domain.Locations;
+﻿using Lingonberry.Api.Domain.Users;
+
+namespace Lingonberry.Api.Domain.Locations;
 
 /// <summary>
 /// Location.
@@ -9,5 +11,7 @@ public class Location
 
     required public string Name { get; set; }
 
-    public ICollection<Division> Divisions { get; set; } = new List<Division>();
+    public ICollection<Division>? Divisions { get; set; }
+
+    public ICollection<User> Users { get; set; } = new List<User>();
 }

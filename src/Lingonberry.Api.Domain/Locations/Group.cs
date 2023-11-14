@@ -9,4 +9,8 @@ public class Group
     required public string Name { get; set; }
 
     public ICollection<User> Users { get; set; } = new List<User>();
+
+    public int? DepartmentId { get; set; }
+
+    public Department? Department { get; set; }
 }

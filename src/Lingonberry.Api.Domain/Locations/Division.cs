@@ -8,7 +8,9 @@ public class Division
 
     required public string Name { get; set; }
 
-    public ICollection<Department> Departments { get; set; } = new List<Department>();
+    public ICollection<Department>? Departments { get; set; }
 
     public ICollection<User> Users { get; set; } = new List<User>();
+
+    public ICollection<Location>? Locations { get; set; }
 }

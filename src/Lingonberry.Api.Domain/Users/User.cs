@@ -14,15 +14,13 @@ public class User : IdentityUser<int>
     /// First name.
     /// </summary>
     [MaxLength(255)]
-    [Required]
-    required public string FirstName { get; set; }
+    public string? FirstName { get; set; }
 
     /// <summary>
     /// Last name.
     /// </summary>
     [MaxLength(255)]
-    [Required]
-    required public string LastName { get; set; }
+    public string? LastName { get; set; }
 
     /// <summary>
     /// Patronymic.
@@ -39,7 +37,7 @@ public class User : IdentityUser<int>
     /// <summary>
     /// User salary.
     /// </summary>
-    required public int Salary { get; set; }
+    public int? Salary { get; set; }
 
     /// <summary>
     /// User position in company.
@@ -91,11 +89,15 @@ public class User : IdentityUser<int>
 
     public Department? Department { get; set; }
 
-    required public int DivisionId { get; set; }
+    public int? DivisionId { get; set; }
 
     public Division? Division { get; set; }
 
     public int? GroupId { get; set; }
 
     public Group? Group { get; set; }
+
+    public int? LocationId { get; set; }
+
+    public Location? Location { get; set; }
 }

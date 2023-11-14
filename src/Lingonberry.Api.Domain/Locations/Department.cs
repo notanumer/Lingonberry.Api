@@ -10,5 +10,9 @@ public class Department
 
     public ICollection<User> Users { get; set; } = new List<User>();
 
-    public ICollection<Group> Groups { get; set; } = new List<Group>();
+    public ICollection<Group>? Groups { get; set; }
+
+    public int? DivisionId { get; set; }
+
+    public Division? Division { get; set; }
 }

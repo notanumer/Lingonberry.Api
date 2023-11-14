@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231112085405_AddDomainEntities")]
-    partial class AddDomainEntities
+    [Migration("20231113211123_AddNullable")]
+    partial class AddNullable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,21 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("DivisionLocation", b =>
+                {
+                    b.Property<int>("DivisionsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("LocationsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("DivisionsId", "LocationsId");
+
+                    b.HasIndex("LocationsId");
+
+                    b.ToTable("DivisionLocation");
+                });
 
             modelBuilder.Entity("Lingonberry.Api.Domain.Locations.Department", b =>
                 {
@@ -89,6 +104,24 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                     b.ToTable("Group");
                 });
 
+            modelBuilder.Entity("Lingonberry.Api.Domain.Locations.Location", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .IsUnicode(false)
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Location");
+                });
+
             modelBuilder.Entity("Lingonberry.Api.Domain.Users.AppIdentityRole", b =>
                 {
                     b.Property<int>("Id")
@@ -145,7 +178,7 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                     b.Property<int?>("DepartmentId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("DivisionId")
+                    b.Property<int?>("DivisionId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Email")
@@ -157,7 +190,6 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .IsUnicode(false)
                         .HasColumnType("character varying(255)");
@@ -172,13 +204,15 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .IsUnicode(false)
                         .HasColumnType("character varying(255)");
 
                     b.Property<DateTime>("LastTokenResetAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("LocationId")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -221,7 +255,7 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                         .HasColumnType("timestamp")
                         .HasComment("For soft-deletes");
 
-                    b.Property<int>("Salary")
+                    b.Property<int?>("Salary")
                         .HasColumnType("integer");
 
                     b.Property<string>("SecurityStamp")
@@ -251,6 +285,8 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                     b.HasIndex("DivisionId");
 
                     b.HasIndex("GroupId");
+
+                    b.HasIndex("LocationId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -403,20 +439,39 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Lingonberry.Api.Domain.Locations.Department", b =>
+            modelBuilder.Entity("DivisionLocation", b =>
                 {
                     b.HasOne("Lingonberry.Api.Domain.Locations.Division", null)
+                        .WithMany()
+                        .HasForeignKey("DivisionsId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Lingonberry.Api.Domain.Locations.Location", null)
+                        .WithMany()
+                        .HasForeignKey("LocationsId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Lingonberry.Api.Domain.Locations.Department", b =>
+                {
+                    b.HasOne("Lingonberry.Api.Domain.Locations.Division", "Division")
                         .WithMany("Departments")
                         .HasForeignKey("DivisionId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Division");
                 });
 
             modelBuilder.Entity("Lingonberry.Api.Domain.Locations.Group", b =>
                 {
-                    b.HasOne("Lingonberry.Api.Domain.Locations.Department", null)
+                    b.HasOne("Lingonberry.Api.Domain.Locations.Department", "Department")
                         .WithMany("Groups")
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Department");
                 });
 
             modelBuilder.Entity("Lingonberry.Api.Domain.Users.User", b =>
@@ -429,12 +484,16 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                     b.HasOne("Lingonberry.Api.Domain.Locations.Division", "Division")
                         .WithMany("Users")
                         .HasForeignKey("DivisionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Lingonberry.Api.Domain.Locations.Group", "Group")
                         .WithMany("Users")
                         .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Lingonberry.Api.Domain.Locations.Location", "Location")
+                        .WithMany("Users")
+                        .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Department");
@@ -442,6 +501,8 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                     b.Navigation("Division");
 
                     b.Navigation("Group");
+
+                    b.Navigation("Location");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -510,6 +571,11 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                 });
 
             modelBuilder.Entity("Lingonberry.Api.Domain.Locations.Group", b =>
+                {
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Lingonberry.Api.Domain.Locations.Location", b =>
                 {
                     b.Navigation("Users");
                 });
