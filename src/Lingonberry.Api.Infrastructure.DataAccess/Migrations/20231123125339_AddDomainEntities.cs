@@ -27,6 +27,30 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                 oldUnicode: false,
                 oldNullable: true);
 
+            migrationBuilder.AlterColumn<string>(
+                name: "LastName",
+                table: "AspNetUsers",
+                type: "character varying(255)",
+                unicode: false,
+                maxLength: 255,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "character varying(255)",
+                oldUnicode: false,
+                oldMaxLength: 255);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "FirstName",
+                table: "AspNetUsers",
+                type: "character varying(255)",
+                unicode: false,
+                maxLength: 255,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "character varying(255)",
+                oldUnicode: false,
+                oldMaxLength: 255);
+
             migrationBuilder.AddColumn<int>(
                 name: "DepartmentId",
                 table: "AspNetUsers",
@@ -37,8 +61,7 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                 name: "DivisionId",
                 table: "AspNetUsers",
                 type: "integer",
-                nullable: false,
-                defaultValue: 0);
+                nullable: true);
 
             migrationBuilder.AddColumn<int>(
                 name: "GroupId",
@@ -52,6 +75,12 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                 type: "boolean",
                 nullable: false,
                 defaultValue: false);
+
+            migrationBuilder.AddColumn<int>(
+                name: "LocationId",
+                table: "AspNetUsers",
+                type: "integer",
+                nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Patronymic",
@@ -72,8 +101,7 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                 name: "Salary",
                 table: "AspNetUsers",
                 type: "integer",
-                nullable: false,
-                defaultValue: 0);
+                nullable: true);
 
             migrationBuilder.AddColumn<int>(
                 name: "WorkType",
@@ -96,6 +124,19 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Location",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", unicode: false, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Location", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Department",
                 columns: table => new
                 {
@@ -111,6 +152,30 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                         name: "FK_Department_Division_DivisionId",
                         column: x => x.DivisionId,
                         principalTable: "Division",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DivisionLocation",
+                columns: table => new
+                {
+                    DivisionsId = table.Column<int>(type: "integer", nullable: false),
+                    LocationsId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DivisionLocation", x => new { x.DivisionsId, x.LocationsId });
+                    table.ForeignKey(
+                        name: "FK_DivisionLocation_Division_DivisionsId",
+                        column: x => x.DivisionsId,
+                        principalTable: "Division",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_DivisionLocation_Location_LocationsId",
+                        column: x => x.LocationsId,
+                        principalTable: "Location",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -151,9 +216,19 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                 column: "GroupId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_LocationId",
+                table: "AspNetUsers",
+                column: "LocationId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Department_DivisionId",
                 table: "Department",
                 column: "DivisionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DivisionLocation_LocationsId",
+                table: "DivisionLocation",
+                column: "LocationsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Group_DepartmentId",
@@ -183,6 +258,14 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                 principalTable: "Group",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AspNetUsers_Location_LocationId",
+                table: "AspNetUsers",
+                column: "LocationId",
+                principalTable: "Location",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
         }
 
         /// <inheritdoc />
@@ -200,8 +283,18 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                 name: "FK_AspNetUsers_Group_GroupId",
                 table: "AspNetUsers");
 
+            migrationBuilder.DropForeignKey(
+                name: "FK_AspNetUsers_Location_LocationId",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "DivisionLocation");
+
             migrationBuilder.DropTable(
                 name: "Group");
+
+            migrationBuilder.DropTable(
+                name: "Location");
 
             migrationBuilder.DropTable(
                 name: "Department");
@@ -221,6 +314,10 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                 name: "IX_AspNetUsers_GroupId",
                 table: "AspNetUsers");
 
+            migrationBuilder.DropIndex(
+                name: "IX_AspNetUsers_LocationId",
+                table: "AspNetUsers");
+
             migrationBuilder.DropColumn(
                 name: "DepartmentId",
                 table: "AspNetUsers");
@@ -235,6 +332,10 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
 
             migrationBuilder.DropColumn(
                 name: "IsVacancy",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropColumn(
+                name: "LocationId",
                 table: "AspNetUsers");
 
             migrationBuilder.DropColumn(
@@ -263,6 +364,34 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                 oldType: "character varying(11)",
                 oldUnicode: false,
                 oldMaxLength: 11,
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "LastName",
+                table: "AspNetUsers",
+                type: "character varying(255)",
+                unicode: false,
+                maxLength: 255,
+                nullable: false,
+                defaultValue: "",
+                oldClrType: typeof(string),
+                oldType: "character varying(255)",
+                oldUnicode: false,
+                oldMaxLength: 255,
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "FirstName",
+                table: "AspNetUsers",
+                type: "character varying(255)",
+                unicode: false,
+                maxLength: 255,
+                nullable: false,
+                defaultValue: "",
+                oldClrType: typeof(string),
+                oldType: "character varying(255)",
+                oldUnicode: false,
+                oldMaxLength: 255,
                 oldNullable: true);
 
             migrationBuilder.CreateTable(

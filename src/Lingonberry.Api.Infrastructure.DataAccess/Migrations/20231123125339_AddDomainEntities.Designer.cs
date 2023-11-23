@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231113211123_AddNullable")]
-    partial class AddNullable
+    [Migration("20231123125339_AddDomainEntities")]
+    partial class AddDomainEntities
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
