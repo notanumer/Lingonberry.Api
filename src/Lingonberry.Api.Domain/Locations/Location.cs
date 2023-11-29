@@ -14,4 +14,8 @@ public class Location
     public ICollection<Division>? Divisions { get; set; }
 
     public ICollection<User> Users { get; set; } = new List<User>();
+
+    public ICollection<Group>? Groups { get; set; }
+
+    public ICollection<Department>? Departments { get; set; }
 }

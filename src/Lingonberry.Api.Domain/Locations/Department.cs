@@ -9,4 +9,6 @@ public class Department : BaseDomain
     public int? DivisionId { get; set; }
 
     public Division? Division { get; set; }
+
+    public ICollection<Location> Locations { get; set; } = new List<Location>();
 }

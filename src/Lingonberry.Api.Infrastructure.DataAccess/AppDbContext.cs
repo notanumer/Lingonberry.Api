@@ -1,4 +1,5 @@
-﻿using Lingonberry.Api.Domain.Users;
+﻿using Lingonberry.Api.Domain.Locations;
+using Lingonberry.Api.Domain.Users;
 using Lingonberry.Api.Infrastructure.Abstractions.Interfaces;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -14,6 +15,14 @@ public class AppDbContext : IdentityDbContext<User, AppIdentityRole, int>, IAppD
 {
     /// <inheritdoc/>
     public DbSet<DataProtectionKey> DataProtectionKeys { get; private set; }
+
+    public DbSet<Division> Divisions { get; set; }
+
+    public DbSet<Location> Locations { get; set; }
+
+    public DbSet<Department> Departments { get; set; }
+
+    public DbSet<Group> Groups { get; set; }
 
     /// <summary>
     /// Constructor.

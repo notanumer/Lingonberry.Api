@@ -112,6 +112,7 @@ public class ExcelParserCommandHandler : IRequestHandler<ExcelParserCommand>
                                 Division = user.Division
                             };
                             user.Department = d;
+                            user.Department.Locations.Add(user.Location!);
                             hashDepartment.Add(value, d);
                         }
                         else
@@ -128,6 +129,7 @@ public class ExcelParserCommandHandler : IRequestHandler<ExcelParserCommand>
                                 Department = user.Department
                             };
                             user.Group = group;
+                            user.Group.Locations.Add(user.Location!);
                             hashGroup.Add(value, group);
                         }
                         else

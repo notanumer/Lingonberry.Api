@@ -3,6 +3,7 @@ using System;
 using Lingonberry.Api.Infrastructure.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231128123853_ImplementBaseDomainAndAddDbSet")]
+    partial class ImplementBaseDomainAndAddDbSet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("DepartmentLocation", b =>
-                {
-                    b.Property<int>("DepartmentsId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("LocationsId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("DepartmentsId", "LocationsId");
-
-                    b.HasIndex("LocationsId");
-
-                    b.ToTable("DepartmentLocation");
-                });
 
             modelBuilder.Entity("DivisionLocation", b =>
                 {
@@ -50,21 +38,6 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                     b.HasIndex("LocationsId");
 
                     b.ToTable("DivisionLocation");
-                });
-
-            modelBuilder.Entity("GroupLocation", b =>
-                {
-                    b.Property<int>("GroupsId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("LocationsId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("GroupsId", "LocationsId");
-
-                    b.HasIndex("LocationsId");
-
-                    b.ToTable("GroupLocation");
                 });
 
             modelBuilder.Entity("Lingonberry.Api.Domain.Locations.Department", b =>
@@ -466,41 +439,11 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("DepartmentLocation", b =>
-                {
-                    b.HasOne("Lingonberry.Api.Domain.Locations.Department", null)
-                        .WithMany()
-                        .HasForeignKey("DepartmentsId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Lingonberry.Api.Domain.Locations.Location", null)
-                        .WithMany()
-                        .HasForeignKey("LocationsId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("DivisionLocation", b =>
                 {
                     b.HasOne("Lingonberry.Api.Domain.Locations.Division", null)
                         .WithMany()
                         .HasForeignKey("DivisionsId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Lingonberry.Api.Domain.Locations.Location", null)
-                        .WithMany()
-                        .HasForeignKey("LocationsId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("GroupLocation", b =>
-                {
-                    b.HasOne("Lingonberry.Api.Domain.Locations.Group", null)
-                        .WithMany()
-                        .HasForeignKey("GroupsId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
