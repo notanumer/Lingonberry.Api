@@ -10,6 +10,36 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterColumn<string>(
+                name: "Name",
+                table: "Groups",
+                type: "text",
+                unicode: false,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "text",
+                oldUnicode: false);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Name",
+                table: "Divisions",
+                type: "text",
+                unicode: false,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "text",
+                oldUnicode: false);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Name",
+                table: "Departments",
+                type: "text",
+                unicode: false,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "text",
+                oldUnicode: false);
+
             migrationBuilder.CreateTable(
                 name: "DepartmentLocation",
                 columns: table => new
@@ -77,6 +107,42 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
 
             migrationBuilder.DropTable(
                 name: "GroupLocation");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Name",
+                table: "Groups",
+                type: "text",
+                unicode: false,
+                nullable: false,
+                defaultValue: "",
+                oldClrType: typeof(string),
+                oldType: "text",
+                oldUnicode: false,
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Name",
+                table: "Divisions",
+                type: "text",
+                unicode: false,
+                nullable: false,
+                defaultValue: "",
+                oldClrType: typeof(string),
+                oldType: "text",
+                oldUnicode: false,
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Name",
+                table: "Departments",
+                type: "text",
+                unicode: false,
+                nullable: false,
+                defaultValue: "",
+                oldClrType: typeof(string),
+                oldType: "text",
+                oldUnicode: false,
+                oldNullable: true);
         }
     }
 }

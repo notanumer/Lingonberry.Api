@@ -79,7 +79,6 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .IsUnicode(false)
                         .HasColumnType("text");
 
@@ -99,7 +98,6 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .IsUnicode(false)
                         .HasColumnType("text");
 
@@ -120,7 +118,6 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .IsUnicode(false)
                         .HasColumnType("text");
 
@@ -514,7 +511,7 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
             modelBuilder.Entity("Lingonberry.Api.Domain.Locations.Department", b =>
                 {
                     b.HasOne("Lingonberry.Api.Domain.Locations.Division", "Division")
-                        .WithMany()
+                        .WithMany("Departments")
                         .HasForeignKey("DivisionId")
                         .OnDelete(DeleteBehavior.Restrict);
 
@@ -622,6 +619,8 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
 
             modelBuilder.Entity("Lingonberry.Api.Domain.Locations.Division", b =>
                 {
+                    b.Navigation("Departments");
+
                     b.Navigation("Users");
                 });
 

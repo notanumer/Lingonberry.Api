@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231129212057_RefactoringGroupAndDepartmentTable")]
+    [Migration("20231130185243_RefactoringGroupAndDepartmentTable")]
     partial class RefactoringGroupAndDepartmentTable
     {
         /// <inheritdoc />
@@ -82,7 +82,6 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .IsUnicode(false)
                         .HasColumnType("text");
 
@@ -102,7 +101,6 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .IsUnicode(false)
                         .HasColumnType("text");
 
@@ -123,7 +121,6 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .IsUnicode(false)
                         .HasColumnType("text");
 
@@ -517,7 +514,7 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
             modelBuilder.Entity("Lingonberry.Api.Domain.Locations.Department", b =>
                 {
                     b.HasOne("Lingonberry.Api.Domain.Locations.Division", "Division")
-                        .WithMany()
+                        .WithMany("Departments")
                         .HasForeignKey("DivisionId")
                         .OnDelete(DeleteBehavior.Restrict);
 
@@ -625,6 +622,8 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
 
             modelBuilder.Entity("Lingonberry.Api.Domain.Locations.Division", b =>
                 {
+                    b.Navigation("Departments");
+
                     b.Navigation("Users");
                 });
 
