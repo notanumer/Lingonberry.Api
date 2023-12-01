@@ -10,5 +10,5 @@ public class GetEmployeesByCityResult
     /// <summary>
     /// Result.
     /// </summary>
-    public LinkedListNode<BaseDomain> Result { get; set; }
+    public List<LinkedList<BaseDomain>>? Result { get; set; }
 }

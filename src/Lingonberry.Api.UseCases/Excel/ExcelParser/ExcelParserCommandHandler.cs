@@ -46,7 +46,8 @@ public class ExcelParserCommandHandler : IRequestHandler<ExcelParserCommand>
             var user = new User
             {
                 CreatedAt = DateTime.Now,
-                IsVacancy = ws.Cell($"H{i}").GetValue<string>() == "Вакансия"
+                IsVacancy = ws.Cell($"H{i}").GetValue<string>() == "Вакансия",
+                Position = ws.Cell($"G{i}").GetValue<string>()
             };
 
             if (!user.IsVacancy)
@@ -112,7 +113,18 @@ public class ExcelParserCommandHandler : IRequestHandler<ExcelParserCommand>
                                 Division = user.Division
                             };
                             user.Department = d;
-                            user.Department.Locations.Add(user.Location!);
+                            if (user.Division == null)
+                            {
+                                if (user.Location!.Departments == null)
+                                {
+                                    user.Location!.Departments = new List<Department> { user.Department };
+                                }
+                                else
+                                {
+                                    user.Location!.Departments.Add(user.Department);
+                                }
+                                user.Department.Locations.Add(user.Location!);
+                            }
                             hashDepartment.Add(value, d);
                         }
                         else
@@ -129,7 +141,18 @@ public class ExcelParserCommandHandler : IRequestHandler<ExcelParserCommand>
                                 Department = user.Department
                             };
                             user.Group = group;
-                            user.Group.Locations.Add(user.Location!);
+                            if (user.Division == null && user.Department == null)
+                            {
+                                if (user.Location!.Groups == null)
+                                {
+                                    user.Location!.Groups = new List<Group> { user.Group };
+                                }
+                                else
+                                {
+                                    user.Location!.Groups.Add(user.Group);
+                                }
+                                user.Group.Locations.Add(user.Location!);
+                            }
                             hashGroup.Add(value, group);
                         }
                         else

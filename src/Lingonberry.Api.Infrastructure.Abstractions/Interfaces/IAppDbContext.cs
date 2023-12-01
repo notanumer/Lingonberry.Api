@@ -1,4 +1,5 @@
-﻿using Lingonberry.Api.Domain.Users;
+﻿using Lingonberry.Api.Domain.Locations;
+using Lingonberry.Api.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lingonberry.Api.Infrastructure.Abstractions.Interfaces;
@@ -12,4 +13,12 @@ public interface IAppDbContext : IDbContextWithSets, IDisposable
     /// Users.
     /// </summary>
     DbSet<User> Users { get; }
+
+    DbSet<Division> Divisions { get; }
+
+    DbSet<Location> Locations { get; }
+
+    DbSet<Department> Departments { get; }
+
+    DbSet<Group> Groups { get; }
 }
