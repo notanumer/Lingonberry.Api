@@ -10,5 +10,15 @@ public class GetEmployeesByCityResult
     /// <summary>
     /// Result.
     /// </summary>
-    public List<LinkedList<BaseDomain>>? Result { get; set; }
+    public List<List<LinkedList<BaseDomain>>>? Result { get; set; }
+
+    /// <summary>
+    /// User count.
+    /// </summary>
+    public int UserCount { get; set; }
+
+    /// <summary>
+    /// Vacancy count.
+    /// </summary>
+    public int VacancyCount { get; set; }
 }
