@@ -2,15 +2,22 @@
 
 namespace Lingonberry.Api.UseCases.Employee.GetEmployeesByCity;
 
-/// <summary>
-/// Get employees by city result.
-/// </summary>
-public class GetEmployeesByCityResult
+public class ResponseDto
+{
+    public LinkedList<List<Content>> Response { get; set; }
+}
+
+public class Content
 {
     /// <summary>
-    /// Result.
+    /// Head.
     /// </summary>
-    public List<LinkedList<List<LinkedList<List<BaseDomain>>>>>? Result { get; set; }
+    public BaseDomain Head { get; set; }
+
+    /// <summary>
+    /// Body.
+    /// </summary>
+    public List<BaseDomain> Body { get; set; }
 
     /// <summary>
     /// User count.

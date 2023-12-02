@@ -28,32 +28,12 @@ public class GetEmployeesByCityQuery : IRequest<GetEmployeesByCityResult>
     required public string CityName { get; init; }
 
     /// <summary>
-    /// User gender.
-    /// </summary>
-    public Gender? Gender { get; init; }
-
-    /// <summary>
-    /// Sorting by location.
-    /// </summary>
-    public SortOrder? LocationsSorted { get; init; }
-
-    /// <summary>
-    /// Sorting by department.
-    /// </summary>
-    public SortOrder? DepartmentSorted { get; init; }
-
-    /// <summary>
-    /// Sorting by divisions.
-    /// </summary>
-    public SortOrder? DivisionsSorted { get; init; }
-
-    /// <summary>
-    /// Sorting by groups.
-    /// </summary>
-    public SortOrder? GroupsSorted { get; init; }
-
-    /// <summary>
     /// Filtering by salary.
     /// </summary>
     public SalaryFilterOrder? SalaryFilterOrder { get; init; }
+
+    /// <summary>
+    /// Structure.
+    /// </summary>
+    required public Structure Structure { get; set; }
 }

@@ -1,11 +1,8 @@
 ﻿using Lingonberry.Api.Domain.Locations;
-using Lingonberry.Api.Domain.Locations.Helpers;
-using Lingonberry.Api.Domain.Users;
 using Lingonberry.Api.Infrastructure.Abstractions.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Saritasa.Tools.Common.Pagination;
 
 namespace Lingonberry.Api.UseCases.Employee.GetEmployeesByCity;
 
@@ -38,81 +35,17 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
             .Include(u => u.Group)
             .AsQueryable();
 
-        if (request.Gender != null)
-        {
-            switch (request.Gender)
-            {
-                case Gender.Male:
-                    break;
-                case Gender.Female:
-                    break;
-            }
-        }
-
-        if (request.DepartmentSorted != null)
-        {
-            switch (request.DepartmentSorted)
-            {
-                case SortOrder.Ascending:
-                    var d =
-                    usersByCity = usersByCity.OrderBy(x => x.Department.Name);
-                    break;
-                case SortOrder.Descending:
-                    usersByCity = usersByCity.OrderByDescending(x => x.Department.Name);
-                    break;
-            }
-        }
-
-        if (request.DivisionsSorted != null)
-        {
-            switch (request.DivisionsSorted)
-            {
-                case SortOrder.Ascending:
-                    usersByCity = usersByCity.OrderBy(x => x.Division.Name);
-                    break;
-                case SortOrder.Descending:
-                    usersByCity = usersByCity.OrderByDescending(x => x.Division.Name);
-                    break;
-            }
-        }
-
-        if (request.GroupsSorted != null)
-        {
-            switch (request.GroupsSorted)
-            {
-                case SortOrder.Ascending:
-                    usersByCity = usersByCity.OrderBy(x => x.Group.Name);
-                    break;
-                case SortOrder.Descending:
-                    usersByCity = usersByCity.OrderByDescending(x => x.Group.Name);
-                    break;
-            }
-        }
-
         if (request.SalaryFilterOrder != null)
         {
 
         }
 
-        if (request.LocationsSorted != null)
-        {
-            switch (request.LocationsSorted)
-            {
-                case SortOrder.Ascending:
-                    usersByCity = usersByCity.OrderBy(x => x.Location);
-                    break;
-                case SortOrder.Descending:
-                    usersByCity = usersByCity.OrderByDescending(x => x.Location);
-                    break;
-            }
-        }
-
-        var usersPaged = PagedListFactory.FromSource(usersByCity, page: request.Page, pageSize: request.PageSize);
+        //var usersPaged = PagedListFactory.FromSource(usersByCity, page: request.Page, pageSize: request.PageSize);
         var vacancyCount = usersByCity.Count(x => x.IsVacancy);
         var userCount = usersByCity.Count() - vacancyCount;
         var result = new GetEmployeesByCityResult
         {
-            Result = new List<List<LinkedList<BaseDomain>>>(),
+            Result = new List<LinkedList<List<LinkedList<List<BaseDomain>>>>>(),
             VacancyCount = vacancyCount,
             UserCount = userCount
         };
@@ -121,35 +54,81 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
             .Where(u => !u.IsVacancy)
             .ToList()
             .GroupBy(u => new { u.Division, u.Department, u.Group })
-            .GroupBy(x => x.Key.Division);
-
+            .GroupBy(x => x.Key.Division)
+            .Select(x => x
+                .GroupBy(x => x.Key.Department));
 
         foreach (var division in divisions)
         {
-            var list = new List<LinkedList<BaseDomain>>();
+            var di = new LinkedList<List<LinkedList<List<BaseDomain>>>>();
+            var divLinkedList = new List<LinkedList<List<BaseDomain>>>();
+            var divLL = new LinkedList<List<BaseDomain>>();
+            var curDiv = division.FirstOrDefault().FirstOrDefault();
+            if (curDiv.Key.Division != null)
+            {
+                divLL.AddLast(new List<BaseDomain>()
+                {
+                    new() { Users = curDiv.ToList(), Name = curDiv.Key.Division.Name }
+                });
+                divLinkedList.Add(divLL);
+                di.AddLast(divLinkedList);
+            }
+            var depLinkedList = new List<LinkedList<List<BaseDomain>>>();
             foreach (var div in division)
             {
-                var linkedList = new LinkedList<BaseDomain>();
-                if (div.Key.Division != null)
+                var depList = new LinkedList<List<BaseDomain>>();
+                if (div.FirstOrDefault().Key.Department != null)
                 {
-                    linkedList.AddLast(new BaseDomain() { Users = div.ToList(), Name = div.Key.Division.Name });
-                }
-                if (div.Key.Department != null)
-                {
-                    linkedList.AddLast(new BaseDomain() { Users = div.ToList(), Name = div.Key.Department.Name });
-                }
-                if (div.Key.Group != null)
-                {
-                    linkedList.AddLast(new BaseDomain() { Users = div.ToList(), Name = div.Key.Group.Name });
+                    depList.AddLast(new List<BaseDomain>()
+                    {
+                        new() { Name = div.FirstOrDefault().Key.Department.Name }
+                    });
+                    depLinkedList.Add(depList);
                 }
 
-                if (div.Key.Division == null && div.Key.Department == null && div.Key.Group == null)
+                var g = new List<BaseDomain>();
+                if (div.FirstOrDefault().Key.Department != null)
                 {
-                    linkedList.AddLast(new BaseDomain() { Users = div.ToList(), Name = "Location" });
+                    foreach (var dep in div)
+                    {
+                        if (dep.Key.Group != null)
+                        {
+                            g.Add(new BaseDomain { Users = dep.ToList(), Name = dep.Key.Group.Name });
+                        }
+                    }
+
+                    if (g.Any())
+                    {
+                        depList.AddLast(g);
+                    }
                 }
-                list.Add(linkedList);
+                else
+                {
+                    foreach (var dep in div)
+                    {
+                        if (dep.Key.Group != null)
+                        {
+                            var depLL = new LinkedList<List<BaseDomain>>();
+                            depLL.AddLast(new List<BaseDomain>()
+                            {
+                                new() { Users = dep.ToList(), Name = dep.Key.Group.Name }
+                            });
+                            depLinkedList.Add(depLL);
+                        }
+                        else
+                        {
+                            var depLL = new LinkedList<List<BaseDomain>>();
+                            depLL.AddLast(new List<BaseDomain>()
+                            {
+                                new() { Users = dep.ToList(), Name = "Empty" }
+                            });
+                            depLinkedList.Add(depLL);
+                        }
+                    }
+                }
             }
-            result.Result.Add(list);
+            di.AddLast(depLinkedList);
+            result.Result.Add(di);
         }
 
         return result;
