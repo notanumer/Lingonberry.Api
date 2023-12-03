@@ -1,4 +1,5 @@
 ﻿using Lingonberry.Api.Domain.Locations;
+using Lingonberry.Api.Domain.Users;
 using Lingonberry.Api.Infrastructure.Abstractions.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +41,6 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
 
         }
 
-        //var usersPaged = PagedListFactory.FromSource(usersByCity, page: request.Page, pageSize: request.PageSize);
         var vacancyCount = usersByCity.Count(x => x.IsVacancy);
         var userCount = usersByCity.Count() - vacancyCount;
         var result = new GetEmployeesByCityResult
@@ -49,24 +49,30 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
             VacancyCount = vacancyCount,
             UserCount = userCount
         };
+        var r = new ResponseDto();
 
-        var divisions = usersByCity
+        var groupDepartment = usersByCity
             .Where(u => !u.IsVacancy)
             .ToList()
             .GroupBy(u => new { u.Division, u.Department, u.Group })
-            .GroupBy(x => x.Key.Division)
-            .Select(x => x
-                .GroupBy(x => x.Key.Department));
+            .GroupBy(u => u.Key.Division)
+            .Select(groupDiv => groupDiv
+                .GroupBy(d => d.Key.Department));
 
-        foreach (var division in divisions)
+        foreach (var groupDep in groupDepartment)
         {
             var di = new LinkedList<List<LinkedList<List<BaseDomain>>>>();
             var divLinkedList = new List<LinkedList<List<BaseDomain>>>();
             var divLL = new LinkedList<List<BaseDomain>>();
-            var curDiv = division.FirstOrDefault().FirstOrDefault();
+            var curDiv = groupDep.FirstOrDefault().FirstOrDefault();
+
+            var contentDiv = new Content { UserCount = userCount, VacancyCount = vacancyCount };
+
             if (curDiv.Key.Division != null)
             {
-                divLL.AddLast(new List<BaseDomain>()
+                contentDiv.Head = new BaseDomain { Users = curDiv.ToList(), Name = curDiv.Key.Division.Name };
+
+                divLL.AddLast(new List<BaseDomain>
                 {
                     new() { Users = curDiv.ToList(), Name = curDiv.Key.Division.Name }
                 });
@@ -74,11 +80,23 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                 di.AddLast(divLinkedList);
             }
             var depLinkedList = new List<LinkedList<List<BaseDomain>>>();
-            foreach (var div in division)
+
+            var contentsDep = new List<Content>();
+
+            foreach (var div in groupDep)
             {
+                var contentDep = new Content();
+
                 var depList = new LinkedList<List<BaseDomain>>();
                 if (div.FirstOrDefault().Key.Department != null)
                 {
+                    var userWithVacancy = div.FirstOrDefault().ToList();
+                    var vacCount = GetVacancyCount(userWithVacancy);
+                    contentDep.UserCount = userWithVacancy.Count - vacCount;
+                    contentDep.VacancyCount = vacCount;
+                    contentDep.Head = new BaseDomain { Name = div.FirstOrDefault().Key.Department.Name };
+
+
                     depList.AddLast(new List<BaseDomain>()
                     {
                         new() { Name = div.FirstOrDefault().Key.Department.Name }
@@ -89,13 +107,13 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                 var g = new List<BaseDomain>();
                 if (div.FirstOrDefault().Key.Department != null)
                 {
-                    foreach (var dep in div)
-                    {
-                        if (dep.Key.Group != null)
-                        {
-                            g.Add(new BaseDomain { Users = dep.ToList(), Name = dep.Key.Group.Name });
-                        }
-                    }
+                    contentDep.Body.AddRange(from dep in div
+                        where dep.Key.Group != null
+                        select new BaseDomain { Users = dep.ToList(), Name = dep.Key.Group.Name });
+
+                    g.AddRange(from dep in div
+                        where dep.Key.Group != null
+                        select new BaseDomain { Users = dep.ToList(), Name = dep.Key.Group.Name });
 
                     if (g.Any())
                     {
@@ -129,8 +147,12 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
             }
             di.AddLast(depLinkedList);
             result.Result.Add(di);
+            //contentDiv.Body = contentsDep;
+            r.Response.AddLast(new List<Content>() { contentDiv });
         }
 
         return result;
     }
+
+    private int GetVacancyCount(ICollection<User> users) => users.Count(x => x.IsVacancy);
 }

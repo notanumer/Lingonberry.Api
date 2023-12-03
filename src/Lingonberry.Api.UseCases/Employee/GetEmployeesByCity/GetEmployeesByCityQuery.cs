@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Lingonberry.Api.Domain.Locations.Helpers;
-using Lingonberry.Api.Domain.Users;
 using MediatR;
 
 namespace Lingonberry.Api.UseCases.Employee.GetEmployeesByCity;

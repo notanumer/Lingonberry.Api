@@ -4,7 +4,7 @@ namespace Lingonberry.Api.UseCases.Employee.GetEmployeesByCity;
 
 public class ResponseDto
 {
-    public LinkedList<List<Content>> Response { get; set; }
+    public LinkedList<List<Content>> Response { get; set; } = new();
 }
 
 public class Content
@@ -17,7 +17,7 @@ public class Content
     /// <summary>
     /// Body.
     /// </summary>
-    public List<BaseDomain> Body { get; set; }
+    public List<BaseDomain> Body { get; set; } = new();
 
     /// <summary>
     /// User count.
