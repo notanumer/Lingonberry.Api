@@ -1,6 +1,7 @@
 ﻿using Lingonberry.Api.UseCases.Employee.GetEmployeesByCity;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Lingonberry.Api.Web.Controllers;
 
@@ -28,8 +29,14 @@ public class EmployeeController : ControllerBase
     /// <param name="query">GetEmployeesByCityQuery.</param>
     /// <returns>GetEmployeesByCityResult.</returns>
     [HttpGet("getEmployeesByCity")]
-    public async Task<GetEmployeesByCityResult> GetEmployeesByCity([FromQuery] GetEmployeesByCityQuery query)
+    public async Task<string> GetEmployeesByCity([FromQuery] GetEmployeesByCityQuery query)
     {
-        return await mediator.Send(query);
+        var settings = new JsonSerializerSettings
+        {
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+            Formatting = Formatting.Indented
+        };
+        var d = await mediator.Send(query);
+        return JsonConvert.SerializeObject(d, settings);
     }
 }

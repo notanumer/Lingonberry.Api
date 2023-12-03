@@ -1,23 +1,18 @@
-﻿using Lingonberry.Api.Domain.Locations;
+﻿using Lingonberry.Api.Domain.Users;
 
 namespace Lingonberry.Api.UseCases.Employee.GetEmployeesByCity;
-
-public class ResponseDto
-{
-    public LinkedList<List<Content>> Response { get; set; } = new();
-}
 
 public class Content
 {
     /// <summary>
-    /// Head.
+    /// Structure name.
     /// </summary>
-    public BaseDomain Head { get; set; }
+    public string Name { get; set; }
 
     /// <summary>
-    /// Body.
+    /// Next content.
     /// </summary>
-    public List<BaseDomain> Body { get; set; } = new();
+    public List<Content> Next { get; set; } = new();
 
     /// <summary>
     /// User count.
@@ -28,4 +23,9 @@ public class Content
     /// Vacancy count.
     /// </summary>
     public int VacancyCount { get; set; }
+
+    /// <summary>
+    /// Users.
+    /// </summary>
+    public ICollection<User>? Users { get; set; }
 }

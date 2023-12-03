@@ -34,5 +34,5 @@ public class GetEmployeesByCityQuery : IRequest<GetEmployeesByCityResult>
     /// <summary>
     /// Structure.
     /// </summary>
-    required public Structure Structure { get; set; }
+    //public Structure Structure { get; set; }
 }

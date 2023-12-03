@@ -33,26 +33,28 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
             .Where(x => x.Location!.Name == request.CityName)
             .Include(u => u.Department)
             .Include(u => u.Division)
-            .Include(u => u.Group)
-            .AsQueryable();
+            .Include(u => u.Group);
 
         if (request.SalaryFilterOrder != null)
         {
 
         }
 
-        var vacancyCount = usersByCity.Count(x => x.IsVacancy);
-        var userCount = usersByCity.Count() - vacancyCount;
+        var userWithoutVacancy = usersByCity.Where(x => !x.IsVacancy).ToList();
+        var vacancyCount = usersByCity.Count() - userWithoutVacancy.Count;
+        var userCount = userWithoutVacancy.Count;
         var result = new GetEmployeesByCityResult
         {
-            Result = new List<LinkedList<List<LinkedList<List<BaseDomain>>>>>(),
-            VacancyCount = vacancyCount,
-            UserCount = userCount
+            Response = new Content
+            {
+                Name = request.CityName,
+                Users = userWithoutVacancy,
+                UserCount = userCount,
+                VacancyCount = vacancyCount
+            }
         };
-        var r = new ResponseDto();
 
         var groupDepartment = usersByCity
-            .Where(u => !u.IsVacancy)
             .ToList()
             .GroupBy(u => new { u.Division, u.Department, u.Group })
             .GroupBy(u => u.Key.Division)
@@ -61,64 +63,57 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
 
         foreach (var groupDep in groupDepartment)
         {
-            var di = new LinkedList<List<LinkedList<List<BaseDomain>>>>();
-            var divLinkedList = new List<LinkedList<List<BaseDomain>>>();
-            var divLL = new LinkedList<List<BaseDomain>>();
+            var contentDiv = new Content();
             var curDiv = groupDep.FirstOrDefault().FirstOrDefault();
-
-            var contentDiv = new Content { UserCount = userCount, VacancyCount = vacancyCount };
-
             if (curDiv.Key.Division != null)
             {
-                contentDiv.Head = new BaseDomain { Users = curDiv.ToList(), Name = curDiv.Key.Division.Name };
-
-                divLL.AddLast(new List<BaseDomain>
-                {
-                    new() { Users = curDiv.ToList(), Name = curDiv.Key.Division.Name }
-                });
-                divLinkedList.Add(divLL);
-                di.AddLast(divLinkedList);
+                contentDiv.Name = curDiv.Key.Division.Name;
             }
-            var depLinkedList = new List<LinkedList<List<BaseDomain>>>();
-
-            var contentsDep = new List<Content>();
 
             foreach (var div in groupDep)
             {
                 var contentDep = new Content();
-
-                var depList = new LinkedList<List<BaseDomain>>();
                 if (div.FirstOrDefault().Key.Department != null)
                 {
-                    var userWithVacancy = div.FirstOrDefault().ToList();
-                    var vacCount = GetVacancyCount(userWithVacancy);
-                    contentDep.UserCount = userWithVacancy.Count - vacCount;
+                    var usersDep = div.SelectMany(x => x.ToList()).ToList();
+                    var vacCount = GetVacancyCount(usersDep);
+                    contentDep.UserCount = usersDep.Count - vacCount;
                     contentDep.VacancyCount = vacCount;
-                    contentDep.Head = new BaseDomain { Name = div.FirstOrDefault().Key.Department.Name };
-
-
-                    depList.AddLast(new List<BaseDomain>()
-                    {
-                        new() { Name = div.FirstOrDefault().Key.Department.Name }
-                    });
-                    depLinkedList.Add(depList);
+                    contentDep.Users = usersDep.Where(x => !x.IsVacancy).ToList();
+                    contentDep.Name = div.FirstOrDefault().Key.Department.Name;
                 }
 
-                var g = new List<BaseDomain>();
                 if (div.FirstOrDefault().Key.Department != null)
                 {
-                    contentDep.Body.AddRange(from dep in div
-                        where dep.Key.Group != null
-                        select new BaseDomain { Users = dep.ToList(), Name = dep.Key.Group.Name });
-
-                    g.AddRange(from dep in div
-                        where dep.Key.Group != null
-                        select new BaseDomain { Users = dep.ToList(), Name = dep.Key.Group.Name });
-
-                    if (g.Any())
+                    var contents = new List<Content>();
+                    foreach (var dep in div)
                     {
-                        depList.AddLast(g);
+                        if (dep.Key.Group != null)
+                        {
+                            contents.Add(new Content()
+                            {
+                                Users = dep.Where(x => !x.IsVacancy).ToList(),
+                                Name = dep.Key.Group.Name,
+                                UserCount = dep.ToList().Count - GetVacancyCount(dep.ToList()),
+                                VacancyCount = GetVacancyCount(dep.ToList())
+                            });
+                        }
+                        else
+                        {
+                            contents.Add(new Content()
+                            {
+                                Users = dep.Where(x => !x.IsVacancy).ToList(),
+                                Name = "Empty",
+                                UserCount = dep.ToList().Count - GetVacancyCount(dep.ToList()),
+                                VacancyCount = GetVacancyCount(dep.ToList())
+                            });
+                        }
                     }
+                    if (contents.Any())
+                    {
+                        contentDep.Next.AddRange(contents);
+                    }
+                    contentDiv.Next.Add(contentDep);
                 }
                 else
                 {
@@ -126,29 +121,34 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                     {
                         if (dep.Key.Group != null)
                         {
-                            var depLL = new LinkedList<List<BaseDomain>>();
-                            depLL.AddLast(new List<BaseDomain>()
+                            var gContent = new Content
                             {
-                                new() { Users = dep.ToList(), Name = dep.Key.Group.Name }
-                            });
-                            depLinkedList.Add(depLL);
+                                UserCount = dep.ToList().Count - GetVacancyCount(dep.ToList()),
+                                VacancyCount = GetVacancyCount(dep.ToList()),
+                                Users = dep.Where(x => !x.IsVacancy).ToList(),
+                                Name = dep.Key.Group.Name
+                            };
+                            contentDiv.Next.Add(gContent);
                         }
                         else
                         {
-                            var depLL = new LinkedList<List<BaseDomain>>();
-                            depLL.AddLast(new List<BaseDomain>()
+                            var gContent = new Content
                             {
-                                new() { Users = dep.ToList(), Name = "Empty" }
-                            });
-                            depLinkedList.Add(depLL);
+                                UserCount = dep.ToList().Count - GetVacancyCount(dep.ToList()),
+                                VacancyCount = GetVacancyCount(dep.ToList()),
+                                Users = dep.Where(x => !x.IsVacancy).ToList(),
+                                Name = "Empty"
+                            };
+                            contentDiv.Next.Add(gContent);
                         }
                     }
                 }
             }
-            di.AddLast(depLinkedList);
-            result.Result.Add(di);
-            //contentDiv.Body = contentsDep;
-            r.Response.AddLast(new List<Content>() { contentDiv });
+            var users = contentDiv.Next.SelectMany(x => x.Users);
+            contentDiv.Users = users.Where(x => !x.IsVacancy).ToList();
+            contentDiv.UserCount = contentDiv.Users.Count;
+            contentDiv.VacancyCount = GetVacancyCount(users.ToList());
+            result.Response.Next.Add(contentDiv);
         }
 
         return result;
