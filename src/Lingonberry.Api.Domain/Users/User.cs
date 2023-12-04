@@ -57,7 +57,7 @@ public class User : IdentityUser<int>
     /// <summary>
     /// Full name, concat of first name and last name.
     /// </summary>
-    public string FullName => StringUtils.JoinIgnoreEmpty(separator: " ", FirstName, LastName);
+    public string FullName => StringUtils.JoinIgnoreEmpty(separator: " ", FirstName, LastName, Patronymic);
 
     /// <summary>
     /// The date when user last logged in.

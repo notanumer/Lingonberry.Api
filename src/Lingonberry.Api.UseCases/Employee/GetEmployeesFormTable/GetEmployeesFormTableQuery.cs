@@ -4,6 +4,9 @@ using MediatR;
 
 namespace Lingonberry.Api.UseCases.Employee.GetEmployeesFormTable;
 
+/// <summary>
+/// Get employees form table query.
+/// </summary>
 public class GetEmployeesFormTableQuery : IRequest<GetEmployeesFormTableResult>
 {
     /// <summary>
@@ -44,7 +47,17 @@ public class GetEmployeesFormTableQuery : IRequest<GetEmployeesFormTableResult>
     public SortOrder? FullName { get; init; }
 
     /// <summary>
-    /// Filter number position.
+    /// Filter user number.
     /// </summary>
-    public SortOrder? NumberPosition { get; init; }
+    public SortOrder? UserNumber { get; init; }
+
+    /// <summary>
+    /// Filter user position.
+    /// </summary>
+    public SortOrder? UserPosition { get; init; }
+
+    /// <summary>
+    /// Filter work type.
+    /// </summary>
+    public SortOrder? WorkType { get; init; }
 }

@@ -47,6 +47,11 @@ public class EmployeeController : ControllerBase
         throw new Exception();
     }
 
+    /// <summary>
+    /// Rest for get employees form table.
+    /// </summary>
+    /// <param name="query">GetEmployeesFormTableQuery.</param>
+    /// <returns>GetEmployeesFormTableResult.</returns>
     [HttpGet("getEmployeesFormTable")]
     public async Task<GetEmployeesFormTableResult> GetEmployeesFormTable([FromQuery] GetEmployeesFormTableQuery query)
     {
