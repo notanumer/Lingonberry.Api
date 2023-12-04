@@ -85,6 +85,10 @@ public class User : IdentityUser<int>
     /// </summary>
     public DateTime? RemovedAt { get; set; }
 
+    public PositionValue UserPosition { get; set; }
+
+    public string UserPositionName { get; set; }
+
     public int? DepartmentId { get; set; }
 
     public Department? Department { get; set; }
