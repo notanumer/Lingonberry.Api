@@ -1,4 +1,5 @@
-﻿using ClosedXML.Excel;
+﻿using System.ComponentModel.DataAnnotations;
+using ClosedXML.Excel;
 using Lingonberry.Api.Domain.Locations;
 using Lingonberry.Api.Domain.Users;
 using Lingonberry.Api.Infrastructure.Abstractions.Interfaces;
@@ -43,11 +44,22 @@ public class ExcelParserCommandHandler : IRequestHandler<ExcelParserCommand>
         var users = new List<User>();
         for (var i = 3; i < countRow; i++)
         {
+            var position = ws.Cell($"G{i}").GetValue<string>();
+            var workType = ws.Cell($"I{i}").GetValue<string>();
+            if (position == "" || workType == "")
+            {
+                continue;
+            }
+
             var user = new User
             {
                 CreatedAt = DateTime.Now,
                 IsVacancy = ws.Cell($"H{i}").GetValue<string>() == "Вакансия",
-                Position = ws.Cell($"G{i}").GetValue<string>()
+                Position = position,
+                UserNumber = ws.Cell($"A{i}").GetValue<string>(),
+                UserPosition = GetValueFromName<PositionValue>(position.Split(" ")[0]),
+                UserPositionName = string.Join("", position.Split(" ").Skip(1)),
+                WorkType = GetValueFromName<WorkType>(workType)
             };
 
             if (!user.IsVacancy)
@@ -168,5 +180,28 @@ public class ExcelParserCommandHandler : IRequestHandler<ExcelParserCommand>
 
         await dbContext.Users.AddRangeAsync(users, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    private T GetValueFromName<T>(string name) where T : Enum
+    {
+        var type = typeof(T);
+
+        foreach (var field in type.GetFields())
+        {
+            if (Attribute.GetCustomAttribute(field, typeof(DisplayAttribute)) is DisplayAttribute attribute)
+            {
+                if (attribute.Name == name)
+                {
+                    return (T)field.GetValue(null);
+                }
+            }
+
+            if (field.Name == name)
+            {
+                return (T)field.GetValue(null);
+            }
+        }
+
+        throw new ArgumentOutOfRangeException(nameof(name));
     }
 }

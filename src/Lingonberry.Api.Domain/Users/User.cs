@@ -89,6 +89,8 @@ public class User : IdentityUser<int>
 
     public string UserPositionName { get; set; }
 
+    public string UserNumber { get; set; }
+
     public int? DepartmentId { get; set; }
 
     public Department? Department { get; set; }
