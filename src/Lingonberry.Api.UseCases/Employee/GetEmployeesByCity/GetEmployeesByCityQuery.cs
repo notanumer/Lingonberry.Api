@@ -22,9 +22,24 @@ public class GetEmployeesByCityQuery : IRequest<GetEmployeesByCityResult>
     public int PageSize { get; init; } = 20;
 
     /// <summary>
-    /// City name.
+    /// Location name.
     /// </summary>
-    required public string CityName { get; init; }
+    required public string LocationName { get; init; }
+
+    /// <summary>
+    /// Division name.
+    /// </summary>
+    public string? DivisionName { get; init; }
+
+    /// <summary>
+    /// Department name.
+    /// </summary>
+    public string? DepartmentName { get; init; }
+
+    /// <summary>
+    /// Group name.
+    /// </summary>
+    public string? GroupName { get; init; }
 
     /// <summary>
     /// Filtering by salary.
@@ -34,5 +49,5 @@ public class GetEmployeesByCityQuery : IRequest<GetEmployeesByCityResult>
     /// <summary>
     /// Structure.
     /// </summary>
-    //public Structure Structure { get; set; }
+    public Structure? Structure { get; init; }
 }

@@ -39,4 +39,16 @@ public class EmployeeController : ControllerBase
         var d = await mediator.Send(query);
         return JsonConvert.SerializeObject(d, settings);
     }
+
+    [HttpGet("getStructureFilters")]
+    public async Task<string> GetStructureFilters([FromQuery] GetEmployeesByCityQuery query)
+    {
+        var settings = new JsonSerializerSettings
+        {
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+            Formatting = Formatting.Indented
+        };
+        var d = await mediator.Send(query);
+        return JsonConvert.SerializeObject(d, settings);
+    }
 }

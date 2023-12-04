@@ -1,5 +1,4 @@
-﻿using Lingonberry.Api.Domain.Locations;
-using Lingonberry.Api.Domain.Users;
+﻿using Lingonberry.Api.Domain.Users;
 using Lingonberry.Api.Infrastructure.Abstractions.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -30,10 +29,26 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
     {
         var usersByCity = dbContext.Users
             .Include(x => x.Location)
-            .Where(x => x.Location!.Name == request.CityName)
+            .Where(u => u.Location.Name == request.LocationName)
             .Include(u => u.Department)
             .Include(u => u.Division)
-            .Include(u => u.Group);
+            .Include(u => u.Group)
+            .AsQueryable();
+
+        if (request.DivisionName != null)
+        {
+            usersByCity = usersByCity.Where(u => u.Division.Name == request.DivisionName);
+        }
+
+        if (request.DepartmentName != null)
+        {
+            usersByCity = usersByCity.Where(u => u.Department.Name == request.DepartmentName);
+        }
+
+        if (request.GroupName != null)
+        {
+            usersByCity = usersByCity.Where(u => u.Group.Name == request.GroupName);
+        }
 
         if (request.SalaryFilterOrder != null)
         {
@@ -47,7 +62,7 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
         {
             Response = new Content
             {
-                Name = request.CityName,
+                Name = request.LocationName,
                 Users = userWithoutVacancy,
                 UserCount = userCount,
                 VacancyCount = vacancyCount
