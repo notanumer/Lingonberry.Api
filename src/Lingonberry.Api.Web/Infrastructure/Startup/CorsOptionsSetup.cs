@@ -32,15 +32,7 @@ internal class CorsOptionsSetup
         options.AddPolicy(CorsPolicyName,
             builder =>
             {
-                if (isDevelopment)
-                {
-                    builder.AllowAnyOrigin();
-                }
-                else
-                {
-                    builder.WithOrigins(frontendOrigins.ToArray())
-                        .AllowCredentials();
-                }
+                builder.AllowAnyOrigin();
                 builder
                     .AllowAnyHeader()
                     .AllowAnyMethod()
