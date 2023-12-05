@@ -10,44 +10,17 @@ namespace Lingonberry.Api.UseCases.Employee.GetEmployeesByCity;
 public class GetEmployeesByCityQuery : IRequest<GetEmployeesByCityResult>
 {
     /// <summary>
-    /// Page.
-    /// </summary>
-    [Required]
-    public int Page { get; init; } = 1;
-
-    /// <summary>
-    /// Page size.
-    /// </summary>
-    [Required]
-    public int PageSize { get; init; } = 20;
-
-    /// <summary>
     /// Location name.
     /// </summary>
     required public string LocationName { get; init; }
 
     /// <summary>
-    /// Division name.
-    /// </summary>
-    public string? DivisionName { get; init; }
-
-    /// <summary>
-    /// Department name.
-    /// </summary>
-    public string? DepartmentName { get; init; }
-
-    /// <summary>
-    /// Group name.
-    /// </summary>
-    public string? GroupName { get; init; }
-
-    /// <summary>
-    /// Filtering by salary.
-    /// </summary>
-    public SalaryFilterOrder? SalaryFilterOrder { get; init; }
-
-    /// <summary>
     /// Structure.
     /// </summary>
-    public Structure? Structure { get; init; }
+    public Structure? Structures { get; init; }
+
+    /// <summary>
+    /// Employee filter.
+    /// </summary>
+    public EmployeeFilter? EmployeeFilter { get; init; }
 }

@@ -2,11 +2,18 @@
 
 public class Structure
 {
-    required public bool IsDivision { get; init; } = true;
+    public string Name { get; set; }
 
-    required public bool IsDepartment { get; init; } = true;
+    public StructureEnum StructureEnum { get; set; }
+}
 
-    required public bool IsGroup { get; init; } = true;
+public enum StructureEnum
+{
+    Division,
 
-    required public bool IsUser { get; init; } = true;
+    Department,
+
+    Group,
+
+    User
 }

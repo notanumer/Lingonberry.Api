@@ -1,4 +1,5 @@
-﻿using Lingonberry.Api.Domain.Users;
+﻿using Lingonberry.Api.Domain.Locations.Helpers;
+using Lingonberry.Api.Domain.Users;
 using Lingonberry.Api.Infrastructure.Abstractions.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -23,37 +24,15 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
         this.dbContext = dbContext;
     }
 
-
     /// <inheritdoc />
     public async Task<GetEmployeesByCityResult> Handle(GetEmployeesByCityQuery request, CancellationToken cancellationToken)
     {
         var usersByCity = dbContext.Users
             .Include(x => x.Location)
             .Where(u => u.Location.Name == request.LocationName)
-            .Include(u => u.Department)
             .Include(u => u.Division)
-            .Include(u => u.Group)
-            .AsQueryable();
-
-        if (request.DivisionName != null)
-        {
-            usersByCity = usersByCity.Where(u => u.Division.Name == request.DivisionName);
-        }
-
-        if (request.DepartmentName != null)
-        {
-            usersByCity = usersByCity.Where(u => u.Department.Name == request.DepartmentName);
-        }
-
-        if (request.GroupName != null)
-        {
-            usersByCity = usersByCity.Where(u => u.Group.Name == request.GroupName);
-        }
-
-        if (request.SalaryFilterOrder != null)
-        {
-
-        }
+            .Include(u => u.Department)
+            .Include(u => u.Group);
 
         var userWithoutVacancy = usersByCity.Where(x => !x.IsVacancy).ToList();
         var vacancyCount = usersByCity.Count() - userWithoutVacancy.Count;
