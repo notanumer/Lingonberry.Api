@@ -3,6 +3,7 @@ using ClosedXML.Excel;
 using Lingonberry.Api.Domain.Locations;
 using Lingonberry.Api.Domain.Users;
 using Lingonberry.Api.Infrastructure.Abstractions.Interfaces;
+using Lingonberry.Api.UseCases.Handlers;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Group = Lingonberry.Api.Domain.Locations.Group;
@@ -57,9 +58,9 @@ public class ExcelParserCommandHandler : IRequestHandler<ExcelParserCommand>
                 IsVacancy = ws.Cell($"H{i}").GetValue<string>() == "Вакансия",
                 Position = position,
                 UserNumber = ws.Cell($"A{i}").GetValue<string>(),
-                UserPosition = GetValueFromName<PositionValue>(position.Split(" ")[0]),
+                UserPosition = DisplayEnum.GetValueFromName<PositionValue>(position.Split(" ")[0]),
                 UserPositionName = string.Join("", position.Split(" ").Skip(1)),
-                WorkType = GetValueFromName<WorkType>(workType)
+                WorkType = DisplayEnum.GetValueFromName<WorkType>(workType)
             };
 
             if (!user.IsVacancy)
@@ -176,28 +177,5 @@ public class ExcelParserCommandHandler : IRequestHandler<ExcelParserCommand>
 
         await dbContext.Users.AddRangeAsync(users, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
-    }
-
-    private T GetValueFromName<T>(string name) where T : Enum
-    {
-        var type = typeof(T);
-
-        foreach (var field in type.GetFields())
-        {
-            if (Attribute.GetCustomAttribute(field, typeof(DisplayAttribute)) is DisplayAttribute attribute)
-            {
-                if (attribute.Name == name)
-                {
-                    return (T)field.GetValue(null);
-                }
-            }
-
-            if (field.Name == name)
-            {
-                return (T)field.GetValue(null);
-            }
-        }
-
-        throw new ArgumentOutOfRangeException(nameof(name));
     }
 }
