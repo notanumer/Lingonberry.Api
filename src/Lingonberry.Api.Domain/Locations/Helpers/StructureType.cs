@@ -1,6 +1,6 @@
 ﻿namespace Lingonberry.Api.Domain.Locations.Helpers;
 
-public class Structure
+public class StructureType
 {
     public string Name { get; set; }
 
