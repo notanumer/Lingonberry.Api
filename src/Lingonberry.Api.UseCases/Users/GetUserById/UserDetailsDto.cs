@@ -21,27 +21,7 @@ public class UserDetailsDto
     required public string Email { get; set; }
 
     /// <summary>
-    /// Phone number.
+    /// Last login date time.
     /// </summary>
-    public string? PhoneNumber { get; set; }
-
-    /// <summary>
-    /// User position in company.
-    /// </summary>
-    public string? Position { get; set; }
-
-    /// <summary>
-    /// Is user vacancy.
-    /// </summary>
-    public bool IsVacancy { get; set; }
-
-    /// <summary>
-    /// Work type of user.
-    /// </summary>
-    public string? WorkType { get; set; }
-
-    /// <summary>
-    /// User number.
-    /// </summary>
-    required public string UserNumber { get; set; }
+    public DateTime LastLogin { get; set; }
 }
