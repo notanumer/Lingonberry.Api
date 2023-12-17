@@ -9,6 +9,8 @@ public class StructureType
 
 public enum StructureEnum
 {
+    Location,
+
     Division,
 
     Department,

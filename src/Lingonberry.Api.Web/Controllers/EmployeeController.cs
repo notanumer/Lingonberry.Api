@@ -31,15 +31,9 @@ public class EmployeeController : ControllerBase
     /// <param name="query">GetEmployeesByCityQuery.</param>
     /// <returns>GetEmployeesByCityResult.</returns>
     [HttpGet("getEmployeesByCity")]
-    public async Task<string> GetEmployeesByCity([FromQuery] GetEmployeesByCityQuery query)
+    public async Task<GetEmployeesByCityResult> GetEmployeesByCity([FromQuery] GetEmployeesByCityQuery query)
     {
-        var settings = new JsonSerializerSettings
-        {
-            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-            Formatting = Formatting.Indented
-        };
-        var d = await mediator.Send(query);
-        return JsonConvert.SerializeObject(d, settings);
+        return await mediator.Send(query);
     }
 
     [HttpGet("getStructureFilters")]
