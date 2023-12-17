@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Lingonberry.Api.Domain.Locations.Helpers;
+using Lingonberry.Api.Domain.Users;
 using Lingonberry.Api.Infrastructure.Abstractions.Interfaces;
 using Lingonberry.Api.UseCases.Employee.Common;
 using MediatR;
@@ -37,17 +38,25 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
             .Include(u => u.Department)
             .Include(u => u.Group);
 
+        var employerValue = new List<PositionValue>() { PositionValue.Chief, PositionValue.Director, PositionValue.Head };
         var userWithoutVacancy = usersByCity.Where(x => !x.IsVacancy).ToList();
         var vacancyCount = usersByCity.Count() - userWithoutVacancy.Count;
         var userCount = userWithoutVacancy.Count;
+        var em = userWithoutVacancy
+            .Select(u => mapper.Map<ShortUser>(u))
+            .GroupBy(x => employerValue
+                .Contains(x.UserPosition)).ToList();
         var result = new GetEmployeesByCityResult
         {
             Name = request.LocationName,
             Id = usersByCity.FirstOrDefault().Location.Id,
             StructureEnum = StructureEnum.Location,
-            Users = userWithoutVacancy
-                .Select(u => mapper.Map<ShortUser>(u))
-                .OrderByDescending(x => x.UserPosition).ToList(),
+            Employers = em.Where(x => x.Key)
+                .Select(x => x.ToList())
+                .FirstOrDefault() ?? new List<ShortUser>(),
+            Employees = em.Where(x => !x.Key)
+                .Select(x => x.ToList())
+                .FirstOrDefault() ?? new List<ShortUser>(),
             UserCount = userCount,
             VacancyCount = vacancyCount
         };
@@ -78,13 +87,19 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                     var shortUserDepartment = div
                         .SelectMany(x => x.ToList())
                         .Select(u => mapper.Map<ShortUser>(u));
+                    var emDep = shortUserDepartment
+                        .GroupBy(x => employerValue
+                            .Contains(x.UserPosition)).ToList();
                     var vacCount = GetVacancyCount(shortUserDepartment);
                     contentDep.UserCount = shortUserDepartment.Count() - vacCount;
                     contentDep.VacancyCount = vacCount;
                     contentDep.StructureEnum = StructureEnum.Department;
-                    contentDep.Users = shortUserDepartment
-                        .Where(x => !x.IsVacancy)
-                        .OrderByDescending(x => x.UserPosition).ToList();
+                    contentDep.Employers = emDep.Where(x => x.Key)
+                            .Select(x => x.ToList())
+                            .FirstOrDefault() ?? new List<ShortUser>();
+                    contentDep.Employees = emDep.Where(x => !x.Key)
+                        .Select(x => x.ToList())
+                        .FirstOrDefault() ?? new List<ShortUser>();
                     contentDep.Name = div.FirstOrDefault().Key.Department.Name;
                     contentDep.Id = div.FirstOrDefault().Key.Department.Id;
                 }
@@ -98,11 +113,17 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                         {
                             var shortUserGroup = dep
                                 .Select(u => mapper.Map<ShortUser>(u));
+                            var emGroup = shortUserGroup
+                                .GroupBy(x => employerValue
+                                    .Contains(x.UserPosition)).ToList();
                             contents.Add(new GetEmployeesByCityResult()
                             {
-                                Users = shortUserGroup
-                                    .Where(u => !u.IsVacancy)
-                                    .OrderByDescending(x => x.UserPosition).ToList(),
+                                Employers = emGroup.Where(x => x.Key)
+                                    .Select(x => x.ToList())
+                                    .FirstOrDefault() ?? new List<ShortUser>(),
+                                Employees = emGroup.Where(x => !x.Key)
+                                    .Select(x => x.ToList())
+                                    .FirstOrDefault() ?? new List<ShortUser>(),
                                 Name = dep.Key.Group.Name,
                                 Id = dep.Key.Group.Id,
                                 StructureEnum = StructureEnum.Group,
@@ -114,11 +135,17 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                         {
                             var shortUser = dep
                                 .Select(u => mapper.Map<ShortUser>(u));
+                            var emUser = shortUser
+                                .GroupBy(x => employerValue
+                                    .Contains(x.UserPosition)).ToList();
                             contents.Add(new GetEmployeesByCityResult
                             {
-                                Users = shortUser
-                                    .Where(u => !u.IsVacancy)
-                                    .OrderByDescending(x => x.UserPosition).ToList(),
+                                Employers = emUser.Where(x => x.Key)
+                                    .Select(x => x.ToList())
+                                    .FirstOrDefault() ?? new List<ShortUser>(),
+                                Employees = emUser.Where(x => !x.Key)
+                                    .Select(x => x.ToList())
+                                    .FirstOrDefault() ?? new List<ShortUser>(),
                                 StructureEnum = StructureEnum.User,
                                 Name = "Empty",
                                 Id = 0,
@@ -141,13 +168,19 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                         {
                             var shortUserGroup = dep
                                 .Select(u => mapper.Map<ShortUser>(u));
+                            var emGroup = shortUserGroup
+                                .GroupBy(x => employerValue
+                                    .Contains(x.UserPosition)).ToList();
                             var gContent = new GetEmployeesByCityResult
                             {
                                 UserCount = shortUserGroup.Count() - GetVacancyCount(shortUserGroup),
                                 VacancyCount = GetVacancyCount(shortUserGroup),
-                                Users = shortUserGroup
-                                    .Where(u => !u.IsVacancy)
-                                    .OrderByDescending(x => x.UserPosition).ToList(),
+                                Employers = emGroup.Where(x => x.Key)
+                                    .Select(x => x.ToList())
+                                    .FirstOrDefault() ?? new List<ShortUser>(),
+                                Employees = emGroup.Where(x => !x.Key)
+                                    .Select(x => x.ToList())
+                                    .FirstOrDefault() ?? new List<ShortUser>(),
                                 Name = dep.Key.Group.Name,
                                 Id = dep.Key.Group.Id,
                                 StructureEnum = StructureEnum.Group
@@ -158,13 +191,19 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                         {
                             var shortUser = dep
                                 .Select(u => mapper.Map<ShortUser>(u));
+                            var emUser = shortUser
+                                .GroupBy(x => employerValue
+                                    .Contains(x.UserPosition)).ToList();
                             var gContent = new GetEmployeesByCityResult
                             {
                                 UserCount = shortUser.Count() - GetVacancyCount(shortUser),
                                 VacancyCount = GetVacancyCount(shortUser),
-                                Users = shortUser
-                                    .Where(x => !x.IsVacancy)
-                                    .OrderByDescending(x => x.UserPosition).ToList(),
+                                Employers = emUser.Where(x => x.Key)
+                                    .Select(x => x.ToList())
+                                    .FirstOrDefault() ?? new List<ShortUser>(),
+                                Employees = emUser.Where(x => !x.Key)
+                                    .Select(x => x.ToList())
+                                    .FirstOrDefault() ?? new List<ShortUser>(),
                                 Name = "Empty",
                                 Id = 0,
                                 StructureEnum = StructureEnum.User
@@ -182,9 +221,10 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
             }
             else
             {
-                contentDiv.Users = contentDiv.Next
-                    .SelectMany(x => x.Users)
-                    .OrderByDescending(x => x.UserPosition).ToList();
+                contentDiv.Employers = contentDiv.Next
+                    .SelectMany(x => x.Employers).ToList();
+                contentDiv.Employees = contentDiv.Next
+                    .SelectMany(x => x.Employees).ToList();
                 contentDiv.UserCount = contentDiv.Next.Sum(x => x.UserCount);
                 contentDiv.VacancyCount = contentDiv.Next.Sum(x => x.VacancyCount);
                 result.Next.Add(contentDiv);

@@ -40,7 +40,12 @@ public class GetEmployeesByCityResult
     public int VacancyCount { get; set; }
 
     /// <summary>
-    /// Users.
+    /// Employer.
     /// </summary>
-    public ICollection<ShortUser>? Users { get; set; }
+    public ICollection<ShortUser>? Employers { get; set; }
+
+    /// <summary>
+    /// Employees.
+    /// </summary>
+    public ICollection<ShortUser>? Employees { get; set; }
 }
