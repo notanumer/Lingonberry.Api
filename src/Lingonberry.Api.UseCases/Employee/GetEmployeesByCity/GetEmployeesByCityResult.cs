@@ -1,5 +1,4 @@
-﻿using Lingonberry.Api.Domain.Locations;
-using Lingonberry.Api.Domain.Locations.Helpers;
+﻿using Lingonberry.Api.Domain.Locations.Helpers;
 using Lingonberry.Api.UseCases.Employee.Common;
 
 namespace Lingonberry.Api.UseCases.Employee.GetEmployeesByCity;
