@@ -1,5 +1,6 @@
 using AutoMapper;
 using Lingonberry.Api.Domain.Users;
+using Lingonberry.Api.UseCases.Handlers;
 using Lingonberry.Api.UseCases.Users.Common.Dtos;
 using Lingonberry.Api.UseCases.Users.GetUserById;
 
@@ -16,7 +17,7 @@ public class UserMappingProfile : Profile
     public UserMappingProfile()
     {
         CreateMap<User, UserDto>();
-        CreateMap<User, UserDetailsDto>();
-        CreateMap<User, UserGetByIdDto>();
+        CreateMap<User, UserDetailsDto>()
+            .ForMember(dest => dest.WorkType, opt => opt.MapFrom(src => DisplayEnum.GetValueFromEnum(src.WorkType)));
     }
 }

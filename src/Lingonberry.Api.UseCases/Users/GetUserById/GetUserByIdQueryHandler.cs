@@ -2,6 +2,7 @@ using AutoMapper;
 using MediatR;
 using Lingonberry.Api.Domain.Users;
 using Lingonberry.Api.Infrastructure.Abstractions.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Saritasa.Tools.EntityFrameworkCore;
 
 namespace Lingonberry.Api.UseCases.Users.GetUserById;
@@ -36,7 +37,12 @@ internal class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserD
     /// <inheritdoc />
     public async Task<UserDetailsDto> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
-        var user = await dbContext.Users.GetAsync(u => u.Id == request.UserId, cancellationToken: cancellationToken);
-        return mapper.Map<UserDetailsDto>(user);
+        var user = await dbContext.Users
+            .Include(u => u.Location)
+            .GetAsync(u => u.Id == request.UserId, cancellationToken: cancellationToken);
+
+        var result = mapper.Map<UserDetailsDto>(user);
+        result.Location = user.Location?.Name;
+        return result;
     }
 }
