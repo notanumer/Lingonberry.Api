@@ -88,6 +88,7 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                         .SelectMany(x => x.ToList())
                         .Select(u => mapper.Map<ShortUser>(u));
                     var emDep = shortUserDepartment
+                        .Where(u => !u.IsVacancy)
                         .GroupBy(x => employerValue
                             .Contains(x.UserPosition)).ToList();
                     var vacCount = GetVacancyCount(shortUserDepartment);
@@ -114,6 +115,7 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                             var shortUserGroup = dep
                                 .Select(u => mapper.Map<ShortUser>(u));
                             var emGroup = shortUserGroup
+                                .Where(u => !u.IsVacancy)
                                 .GroupBy(x => employerValue
                                     .Contains(x.UserPosition)).ToList();
                             contents.Add(new GetEmployeesByCityResult()
@@ -136,6 +138,7 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                             var shortUser = dep
                                 .Select(u => mapper.Map<ShortUser>(u));
                             var emUser = shortUser
+                                .Where(u => !u.IsVacancy)
                                 .GroupBy(x => employerValue
                                     .Contains(x.UserPosition)).ToList();
                             contents.Add(new GetEmployeesByCityResult
@@ -169,6 +172,7 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                             var shortUserGroup = dep
                                 .Select(u => mapper.Map<ShortUser>(u));
                             var emGroup = shortUserGroup
+                                .Where(u => !u.IsVacancy)
                                 .GroupBy(x => employerValue
                                     .Contains(x.UserPosition)).ToList();
                             var gContent = new GetEmployeesByCityResult
@@ -192,6 +196,7 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                             var shortUser = dep
                                 .Select(u => mapper.Map<ShortUser>(u));
                             var emUser = shortUser
+                                .Where(u => !u.IsVacancy)
                                 .GroupBy(x => employerValue
                                     .Contains(x.UserPosition)).ToList();
                             var gContent = new GetEmployeesByCityResult

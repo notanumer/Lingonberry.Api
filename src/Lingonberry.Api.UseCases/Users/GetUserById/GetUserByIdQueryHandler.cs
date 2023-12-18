@@ -2,6 +2,7 @@ using AutoMapper;
 using MediatR;
 using Lingonberry.Api.Domain.Users;
 using Lingonberry.Api.Infrastructure.Abstractions.Interfaces;
+using Lingonberry.Api.UseCases.Handlers;
 using Microsoft.EntityFrameworkCore;
 using Saritasa.Tools.EntityFrameworkCore;
 
@@ -43,6 +44,7 @@ internal class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserD
 
         var result = mapper.Map<UserDetailsDto>(user);
         result.Location = user.Location?.Name;
+        result.WorkType = DisplayEnum.GetValueFromEnum(user.WorkType);
         return result;
     }
 }

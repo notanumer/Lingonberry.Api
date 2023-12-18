@@ -25,11 +25,6 @@ public class GetEmployeesByCityResult
     public StructureEnum? StructureEnum { get; set; }
 
     /// <summary>
-    /// Next content.
-    /// </summary>
-    public List<GetEmployeesByCityResult> Next { get; set; } = new();
-
-    /// <summary>
     /// User count.
     /// </summary>
     public int UserCount { get; set; }
@@ -38,6 +33,11 @@ public class GetEmployeesByCityResult
     /// Vacancy count.
     /// </summary>
     public int VacancyCount { get; set; }
+
+    /// <summary>
+    /// Next content.
+    /// </summary>
+    public List<GetEmployeesByCityResult> Next { get; set; } = new();
 
     /// <summary>
     /// Employer.
