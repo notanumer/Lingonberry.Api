@@ -1,4 +1,5 @@
 ﻿using Lingonberry.Api.UseCases.Structure.Common;
+using Lingonberry.Api.UseCases.Structure.GetDivisionByLocation;
 using Lingonberry.Api.UseCases.Structure.GetLocationById;
 using Lingonberry.Api.UseCases.Structure.GetLocations;
 using Lingonberry.Api.UseCases.Users.GetUserById;
@@ -37,12 +38,23 @@ public class StructureController
     }
 
     /// <summary>
-    /// Get user by id.
+    /// Get location by id.
     /// </summary>
     /// <param name="query">GetLocationByIdQuery.</param>
     /// <returns>LocationDto.</returns>
     [HttpGet("getLocationById")]
     public async Task<LocationDto> GetLocationById([FromQuery] GetLocationByIdQuery query)
+    {
+        return await mediator.Send(query);
+    }
+
+    /// <summary>
+    /// Get division by location.
+    /// </summary>
+    /// <param name="query">GetDivisionByLocationQuery.</param>
+    /// <returns>LocationDto.</returns>
+    [HttpGet("getDivisionByLocation")]
+    public async Task<List<GetDivisionByLocationQueryResult>> GetDivisionByLocation([FromQuery] GetDivisionByLocationQuery query)
     {
         return await mediator.Send(query);
     }

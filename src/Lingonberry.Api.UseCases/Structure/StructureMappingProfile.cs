@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Lingonberry.Api.Domain.Locations;
 using Lingonberry.Api.UseCases.Structure.Common;
-using Lingonberry.Api.UseCases.Structure.GetLocations;
+using Lingonberry.Api.UseCases.Structure.GetDivisionByLocation;
 
 namespace Lingonberry.Api.UseCases.Structure;
 
@@ -16,5 +16,6 @@ public class StructureMappingProfile : Profile
     public StructureMappingProfile()
     {
         CreateMap<Location, LocationDto>();
+        CreateMap<Division, GetDivisionByLocationQueryResult>();
     }
 }
