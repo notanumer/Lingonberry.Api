@@ -1,4 +1,6 @@
-﻿namespace Lingonberry.Api.UseCases.Structure.GetDivisionByLocation;
+﻿using Lingonberry.Api.Domain.Locations.Helpers;
+
+namespace Lingonberry.Api.UseCases.Structure.GetDivisionByLocation;
 
 /// <summary>
 /// Get division by location result.
@@ -14,4 +16,9 @@ public class GetDivisionByLocationQueryResult
     /// Division id.
     /// </summary>
     required public int Id { get; set; }
+
+    /// <summary>
+    /// Structure enum.
+    /// </summary>
+    required public StructureEnum StructureEnum { get; set; } = StructureEnum.Division;
 }
