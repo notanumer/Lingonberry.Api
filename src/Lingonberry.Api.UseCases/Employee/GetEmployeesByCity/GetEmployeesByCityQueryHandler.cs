@@ -58,7 +58,8 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                 .Select(x => x.ToList())
                 .FirstOrDefault() ?? new List<ShortUser>(),
             UserCount = userCount,
-            VacancyCount = vacancyCount
+            VacancyCount = vacancyCount,
+            IsDisplay = true
         };
 
         var groupDepartment = usersByCity
@@ -106,7 +107,7 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                         }
                         display = filterDisplay.StructureEnum;
                     }
-                    contentDep.IsDisplay = display is StructureEnum.Department;
+                    contentDep.IsDisplay = request.FilterDisplaysList!.Count == 0 || display is StructureEnum.Department;
                     var shortUserDepartment = div
                         .SelectMany(x => x.ToList())
                         .Select(u => mapper.Map<ShortUser>(u));
@@ -154,7 +155,7 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                                 StructureEnum = StructureEnum.Group,
                                 UserCount = shortUserGroup.Count() - GetVacancyCount(shortUserGroup),
                                 VacancyCount = GetVacancyCount(shortUserGroup),
-                                IsDisplay = display is StructureEnum.Group
+                                IsDisplay = request.FilterDisplaysList!.Count == 0 || display is StructureEnum.Group
                             };
                             if (group.IsDisplay)
                             {
@@ -183,7 +184,7 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                                 Id = 0,
                                 UserCount = shortUser.Count() - GetVacancyCount(shortUser),
                                 VacancyCount = GetVacancyCount(shortUser),
-                                IsDisplay = display is StructureEnum.User
+                                IsDisplay = request.FilterDisplaysList!.Count == 0 || display is StructureEnum.User
                             };
                             if (empty.IsDisplay)
                             {
@@ -234,7 +235,7 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                                 Name = dep.Key.Group.Name,
                                 Id = dep.Key.Group.Id,
                                 StructureEnum = StructureEnum.Group,
-                                IsDisplay = display is StructureEnum.Group
+                                IsDisplay = request.FilterDisplaysList!.Count == 0 || display is StructureEnum.Group
                             };
                             contentDiv.Next.Add(gContent);
                         }
@@ -269,7 +270,7 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                                 Name = "Empty",
                                 Id = 0,
                                 StructureEnum = StructureEnum.User,
-                                IsDisplay = display is StructureEnum.User
+                                IsDisplay = request.FilterDisplaysList!.Count == 0 || display is StructureEnum.User
                             };
                             contentDiv.Next.Add(gContent);
                         }
