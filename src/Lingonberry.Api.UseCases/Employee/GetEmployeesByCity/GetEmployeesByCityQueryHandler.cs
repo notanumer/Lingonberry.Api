@@ -72,11 +72,23 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
         {
             var contentDiv = new GetEmployeesByCityResult();
             var curDiv = groupDep.FirstOrDefault().FirstOrDefault();
+            StructureEnum? display = null;
             if (curDiv?.Key.Division != null)
             {
+                if (request.FilterDisplaysList!.Count != 0)
+                {
+                    var filterDisplay = request.FilterDisplaysList
+                        .FirstOrDefault(d => d.StructureName == curDiv.Key.Division.Name);
+                    if (filterDisplay == null)
+                    {
+                        continue;
+                    }
+                    display = filterDisplay.StructureEnum;
+                }
                 contentDiv.Name = curDiv.Key.Division.Name;
                 contentDiv.Id = curDiv.Key.Division.Id;
                 contentDiv.StructureEnum = StructureEnum.Division;
+                contentDiv.IsDisplay = true;
             }
 
             foreach (var div in groupDep)
@@ -84,6 +96,17 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                 var contentDep = new GetEmployeesByCityResult();
                 if (div.FirstOrDefault()?.Key.Department != null)
                 {
+                    if (request.FilterDisplaysList!.Count != 0 && curDiv?.Key.Division == null)
+                    {
+                        var filterDisplay = request.FilterDisplaysList
+                            .FirstOrDefault(d => d.StructureName == div.FirstOrDefault()?.Key.Department.Name);
+                        if (filterDisplay == null)
+                        {
+                            continue;
+                        }
+                        display = filterDisplay.StructureEnum;
+                    }
+                    contentDep.IsDisplay = display is StructureEnum.Department;
                     var shortUserDepartment = div
                         .SelectMany(x => x.ToList())
                         .Select(u => mapper.Map<ShortUser>(u));
@@ -118,7 +141,7 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                                 .Where(u => !u.IsVacancy)
                                 .GroupBy(x => employerValue
                                     .Contains(x.UserPosition)).ToList();
-                            contents.Add(new GetEmployeesByCityResult()
+                            var group = new GetEmployeesByCityResult()
                             {
                                 Employers = emGroup.Where(x => x.Key)
                                     .Select(x => x.ToList())
@@ -130,8 +153,14 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                                 Id = dep.Key.Group.Id,
                                 StructureEnum = StructureEnum.Group,
                                 UserCount = shortUserGroup.Count() - GetVacancyCount(shortUserGroup),
-                                VacancyCount = GetVacancyCount(shortUserGroup)
-                            });
+                                VacancyCount = GetVacancyCount(shortUserGroup),
+                                IsDisplay = display is StructureEnum.Group
+                            };
+                            if (group.IsDisplay)
+                            {
+                                contentDep.IsDisplay = true;
+                            }
+                            contents.Add(group);
                         }
                         else
                         {
@@ -141,7 +170,7 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                                 .Where(u => !u.IsVacancy)
                                 .GroupBy(x => employerValue
                                     .Contains(x.UserPosition)).ToList();
-                            contents.Add(new GetEmployeesByCityResult
+                            var empty = new GetEmployeesByCityResult
                             {
                                 Employers = emUser.Where(x => x.Key)
                                     .Select(x => x.ToList())
@@ -153,14 +182,21 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                                 Name = "Empty",
                                 Id = 0,
                                 UserCount = shortUser.Count() - GetVacancyCount(shortUser),
-                                VacancyCount = GetVacancyCount(shortUser)
-                            });
+                                VacancyCount = GetVacancyCount(shortUser),
+                                IsDisplay = display is StructureEnum.User
+                            };
+                            if (empty.IsDisplay)
+                            {
+                                contentDep.IsDisplay = true;
+                            }
+                            contents.Add(empty);
                         }
                     }
                     if (contents.Any())
                     {
                         contentDep.Next.AddRange(contents);
                     }
+
                     contentDiv.Next.Add(contentDep);
                 }
                 else
@@ -169,6 +205,16 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                     {
                         if (dep.Key.Group != null)
                         {
+                            if (request.FilterDisplaysList!.Count != 0 && curDiv?.Key.Division == null)
+                            {
+                                var filterDisplay = request.FilterDisplaysList
+                                    .FirstOrDefault(d => d.StructureName == dep.Key.Group.Name);
+                                if (filterDisplay == null)
+                                {
+                                    continue;
+                                }
+                                display = filterDisplay.StructureEnum;
+                            }
                             var shortUserGroup = dep
                                 .Select(u => mapper.Map<ShortUser>(u));
                             var emGroup = shortUserGroup
@@ -187,12 +233,23 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                                     .FirstOrDefault() ?? new List<ShortUser>(),
                                 Name = dep.Key.Group.Name,
                                 Id = dep.Key.Group.Id,
-                                StructureEnum = StructureEnum.Group
+                                StructureEnum = StructureEnum.Group,
+                                IsDisplay = display is StructureEnum.Group
                             };
                             contentDiv.Next.Add(gContent);
                         }
                         else
                         {
+                            if (request.FilterDisplaysList!.Count != 0 && curDiv?.Key.Division == null)
+                            {
+                                var filterDisplay = request.FilterDisplaysList
+                                    .FirstOrDefault(d => d.StructureName == "Empty");
+                                if (filterDisplay == null)
+                                {
+                                    continue;
+                                }
+                                display = filterDisplay.StructureEnum;
+                            }
                             var shortUser = dep
                                 .Select(u => mapper.Map<ShortUser>(u));
                             var emUser = shortUser
@@ -211,7 +268,8 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                                     .FirstOrDefault() ?? new List<ShortUser>(),
                                 Name = "Empty",
                                 Id = 0,
-                                StructureEnum = StructureEnum.User
+                                StructureEnum = StructureEnum.User,
+                                IsDisplay = display is StructureEnum.User
                             };
                             contentDiv.Next.Add(gContent);
                         }

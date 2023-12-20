@@ -34,6 +34,11 @@ public class GetEmployeesByCityResult
     public int VacancyCount { get; set; }
 
     /// <summary>
+    /// Is display.
+    /// </summary>
+    public bool IsDisplay { get; set; }
+
+    /// <summary>
     /// Next content.
     /// </summary>
     public List<GetEmployeesByCityResult> Next { get; set; } = new();

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
-using Lingonberry.Api.Domain.Locations.Helpers;
+using Lingonberry.Api.UseCases.Handlers;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Lingonberry.Api.UseCases.Employee.GetEmployeesByCity;
 
@@ -14,4 +15,10 @@ public class GetEmployeesByCityQuery : IRequest<GetEmployeesByCityResult>
     /// </summary>
     [DefaultValue("Брусника.Екатеринбург")]
     required public string LocationName { get; init; }
+
+    /// <summary>
+    /// List with filter displays.
+    /// </summary>
+    [ModelBinder(typeof(SwaggerCollection<List<FilterDisplays>>))]
+    public List<FilterDisplays>? FilterDisplaysList { get; init; }
 }
