@@ -17,7 +17,7 @@ public class SwaggerCollection<T> : IModelBinder where T : ICollection
     /// <returns>Tas.</returns>
     public Task BindModelAsync(ModelBindingContext bindingContext)
     {
-        var val = bindingContext.ValueProvider.GetValue(bindingContext.FieldName).ToString();
+        var val = bindingContext.ValueProvider.GetValue(bindingContext.FieldName);
         var first = string.Concat("[", string.Join(",", val.ToList())
             .Replace("\n", ""), "]");
         var model = JsonConvert.DeserializeObject<T>(first);

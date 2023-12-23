@@ -31,11 +31,6 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
     /// <inheritdoc />
     public async Task<GetEmployeesByCityResult> Handle(GetEmployeesByCityQuery request, CancellationToken cancellationToken)
     {
-        if (request.FilterDisplaysList.Count == 0)
-        {
-            return new GetEmployeesByCityResult();
-        }
-
         var usersByCity = dbContext.Users
             .Include(x => x.Location)
             .Where(u => u.Location != null && u.Location.Name == request.LocationName)
@@ -66,6 +61,11 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
             VacancyCount = vacancyCount,
             IsDisplay = true
         };
+
+        if (request.FilterDisplaysList.Count == 0)
+        {
+            return result;
+        }
 
         var groupDepartment = usersByCity
             .ToList()
