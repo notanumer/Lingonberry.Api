@@ -123,8 +123,8 @@ public class ExcelParserCommandHandler : IRequestHandler<ExcelParserCommand>
                             var d = new Department
                             {
                                 Name = value,
-                                Division = user.Division
                             };
+                            d.Divisions.Add(user.Division);
                             user.Department = d;
                             hashDepartment.Add(value, d);
                         }

@@ -1,8 +1,10 @@
-﻿using Lingonberry.Api.Infrastructure.Abstractions.Interfaces;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Lingonberry.Api.Infrastructure.Abstractions.Interfaces;
+using Lingonberry.Api.UseCases.Employee.GetStructureFilters.Dto;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Saritasa.Tools.Common.Extensions;
 
 namespace Lingonberry.Api.UseCases.Employee.GetStructureFilters;
 
@@ -13,33 +15,35 @@ public class GetStructureFiltersQueryHandler : IRequestHandler<GetStructureFilte
 {
     private readonly ILogger<GetStructureFiltersQueryHandler> logger;
     private readonly IAppDbContext dbContext;
+    private readonly IMapper mapper;
 
     /// <summary>
     /// Constructor.
     /// </summary>
-    public GetStructureFiltersQueryHandler(ILogger<GetStructureFiltersQueryHandler> logger, IAppDbContext dbContext)
+    public GetStructureFiltersQueryHandler(ILogger<GetStructureFiltersQueryHandler> logger, IAppDbContext dbContext, IMapper mapper)
     {
         this.logger = logger;
         this.dbContext = dbContext;
+        this.mapper = mapper;
     }
 
     /// <inheritdoc />
-    public Task<GetStructureFiltersQueryResult> Handle(GetStructureFiltersQuery request, CancellationToken cancellationToken)
+    public async Task<GetStructureFiltersQueryResult> Handle(GetStructureFiltersQuery request, CancellationToken cancellationToken)
     {
-        var location = dbContext.Locations
-            .Include(l => l.Divisions)
-            .ThenInclude(dd => dd.Departments)
-            .ThenInclude(d => d.Groups)
-            .ThenInclude(d => d.Locations)
-            .ThenInclude(d => d.Departments)
-            .ThenInclude(d => d.Locations);
+        try
+        {
+            var divisons = await dbContext.Locations
+            .Where(l => l.Name == request.LocationName)
+            .SelectMany(l => l.Divisions)
+            .ProjectTo<DivisionByLocationDto>(mapper.ConfigurationProvider)
+            .ToListAsync(cancellationToken);
 
-        var d = location.Select(x => x.Divisions
-            .Where(y => y.Departments
-                .Any(u => u.Groups
-                    .Any(g => g.Locations
-                        .Any(l => l.Name == x.Name)))));
-
-        throw new Exception();
+            return new GetStructureFiltersQueryResult { Divisions = divisons };
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error on getting divisions by location name {LocationName}", request.LocationName);
+            return new GetStructureFiltersQueryResult();
+        }
     }
 }

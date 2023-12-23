@@ -7,5 +7,8 @@ namespace Lingonberry.Api.UseCases.Employee.GetStructureFilters;
 /// </summary>
 public class GetStructureFiltersQuery : IRequest<GetStructureFiltersQueryResult>
 {
-
+    /// <summary>
+    /// Name of location.
+    /// </summary>
+    required public string LocationName { get; init; }
 }

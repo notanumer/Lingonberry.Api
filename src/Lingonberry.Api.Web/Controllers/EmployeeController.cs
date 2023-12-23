@@ -1,9 +1,9 @@
 ﻿using Lingonberry.Api.UseCases.Employee.GetEmployeesByCity;
 using Lingonberry.Api.UseCases.Employee.GetEmployeesFormTable;
 using Lingonberry.Api.UseCases.Employee.GetStructureFilters;
+using Lingonberry.Api.UseCases.Employee.GetDepartments;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace Lingonberry.Api.Web.Controllers;
 
@@ -36,8 +36,19 @@ public class EmployeeController : ControllerBase
         return await mediator.Send(query);
     }
 
-    [HttpGet("getStructureFilters")]
-    public async Task<GetStructureFiltersQueryResult> GetStructureFilters([FromQuery] GetStructureFiltersQuery query)
+    /// <summary>
+    /// Get divisions by location.
+    /// </summary>
+    /// <param name="query">Request query.</param>
+    /// <returns>Divisons names collection.</returns>
+    [HttpGet("divisions-by-location")]
+    public async Task<GetStructureFiltersQueryResult> GetDivisionsByLocation([FromQuery] GetStructureFiltersQuery query)
+    {
+        return await mediator.Send(query);
+    }
+
+    [HttpGet("departments-by-location-and-divison")]
+    public async Task<GetDepartmentsQueryResult> GetDepartments([FromQuery] GetDepartmentsQuery query)
     {
         return await mediator.Send(query);
     }
