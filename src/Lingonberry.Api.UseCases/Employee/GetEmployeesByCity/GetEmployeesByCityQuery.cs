@@ -20,5 +20,5 @@ public class GetEmployeesByCityQuery : IRequest<GetEmployeesByCityResult>
     /// List with filter displays.
     /// </summary>
     [ModelBinder(typeof(SwaggerCollection<List<FilterDisplays>>))]
-    public List<FilterDisplays>? FilterDisplaysList { get; init; }
+    required public List<FilterDisplays> FilterDisplaysList { get; init; }
 }
