@@ -1,10 +1,11 @@
 ﻿using Lingonberry.Api.UseCases.Structure.Common;
-using Lingonberry.Api.UseCases.Structure.GetDivisionByLocation;
+using Lingonberry.Api.UseCases.Structure.GetLocationData;
 using Lingonberry.Api.UseCases.Structure.GetLocationById;
 using Lingonberry.Api.UseCases.Structure.GetLocations;
 using Lingonberry.Api.UseCases.Users.GetUserById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Lingonberry.Api.UseCases.Structure.GetLocationData.Dto;
 
 namespace Lingonberry.Api.Web.Controllers;
 
@@ -53,8 +54,8 @@ public class StructureController
     /// </summary>
     /// <param name="query">GetDivisionByLocationQuery.</param>
     /// <returns>LocationDto.</returns>
-    [HttpGet("getDivisionByLocation")]
-    public async Task<List<GetDivisionByLocationQueryResult>> GetDivisionByLocation([FromQuery] GetDivisionByLocationQuery query)
+    [HttpGet("location-data")]
+    public async Task<ICollection<GetLocationDataDto>> GetLocationData([FromQuery] GetLocationDataQuery query)
     {
         return await mediator.Send(query);
     }

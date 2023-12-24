@@ -1,9 +1,9 @@
-﻿namespace Lingonberry.Api.UseCases.Employee.GetStructureFilters.Dto;
+﻿namespace Lingonberry.Api.UseCases.Employee.GetDivisionsNames.Dto;
 
 /// <summary>
 /// Divisions for filter.
 /// </summary>
-public record DivisionByLocationDto
+public record GetDivisionsNamesDto
 {
     /// <summary>
     /// Name of division.

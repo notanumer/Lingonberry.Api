@@ -10,5 +10,8 @@ internal class DepartmentConfiguration : IEntityTypeConfiguration<Department>
     {
         builder.HasMany(d => d.Divisions)
             .WithMany(l => l.Departments);
+
+        builder.HasMany(d => d.Groups)
+            .WithMany(g => g.Departments);
     }
 }

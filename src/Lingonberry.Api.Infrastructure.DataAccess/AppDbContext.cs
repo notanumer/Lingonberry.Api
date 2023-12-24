@@ -37,17 +37,17 @@ public class AppDbContext : IdentityDbContext<User, AppIdentityRole, int>, IAppD
     {
         base.OnModelCreating(modelBuilder);
 
-        RestrictCascadeDelete(modelBuilder);
+        CascadeDelete(modelBuilder);
         ForceHavingAllStringsAsVarchars(modelBuilder);
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
 
-    private static void RestrictCascadeDelete(ModelBuilder modelBuilder)
+    private static void CascadeDelete(ModelBuilder modelBuilder)
     {
         foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
         {
-            relationship.DeleteBehavior = DeleteBehavior.Restrict;
+            relationship.DeleteBehavior = DeleteBehavior.Cascade;
         }
     }
 

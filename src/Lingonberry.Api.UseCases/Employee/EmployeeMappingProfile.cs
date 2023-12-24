@@ -2,7 +2,7 @@
 using Lingonberry.Api.Domain.Locations;
 using Lingonberry.Api.Domain.Users;
 using Lingonberry.Api.UseCases.Employee.Common;
-using Lingonberry.Api.UseCases.Employee.GetStructureFilters.Dto;
+using Lingonberry.Api.UseCases.Employee.GetDivisionsNames.Dto;
 
 namespace Lingonberry.Api.UseCases.Employee;
 
@@ -17,6 +17,6 @@ public class EmployeeMappingProfile : Profile
     public EmployeeMappingProfile()
     {
         CreateMap<User, ShortUser>();
-        CreateMap<Division, DivisionByLocationDto>();
+        CreateMap<Division, GetDivisionsNamesDto>();
     }
 }
