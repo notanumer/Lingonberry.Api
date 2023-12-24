@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
+using Lingonberry.Api.Domain.Locations;
 using Lingonberry.Api.Domain.Users;
 using Lingonberry.Api.UseCases.Employee.Common;
-using Microsoft.AspNetCore.Identity;
+using Lingonberry.Api.UseCases.Employee.GetDivisionsNames.Dto;
 
 namespace Lingonberry.Api.UseCases.Employee;
 
@@ -16,5 +17,6 @@ public class EmployeeMappingProfile : Profile
     public EmployeeMappingProfile()
     {
         CreateMap<User, ShortUser>();
+        CreateMap<Division, GetDivisionsNamesDto>();
     }
 }

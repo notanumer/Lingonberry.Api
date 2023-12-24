@@ -4,7 +4,7 @@ namespace Lingonberry.Api.Domain.Locations;
 
 public class Group : BaseDomain
 {
-    public int? DepartmentId { get; set; }
+    public ICollection<Department>? Departments { get; set; }
 
-    public Department? Department { get; set; }
+    public ICollection<Division>? Divisions { get; set; }
 }

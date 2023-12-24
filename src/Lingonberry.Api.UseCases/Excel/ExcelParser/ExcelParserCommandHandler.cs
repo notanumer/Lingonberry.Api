@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using ClosedXML.Excel;
+﻿using ClosedXML.Excel;
 using Lingonberry.Api.Domain.Locations;
 using Lingonberry.Api.Domain.Users;
 using Lingonberry.Api.Infrastructure.Abstractions.Interfaces;
@@ -86,7 +85,7 @@ public class ExcelParserCommandHandler : IRequestHandler<ExcelParserCommand>
                         if (!hashLocation.ContainsKey(value))
                         {
                             var l = new Location() { Name = value };
-                            hashLocation.Add(value, l );
+                            hashLocation.Add(value, l);
                             user.Location = l;
                         }
                         else
@@ -114,8 +113,6 @@ public class ExcelParserCommandHandler : IRequestHandler<ExcelParserCommand>
                         {
                             hashLocation[user.Location.Name].Divisions.Add(user.Division);
                         }
-
-                        user.Division.Locations.Add(hashLocation[user.Location.Name]);
                         break;
                     case 'E':
                         if (!hashDepartment.ContainsKey(value))
@@ -123,7 +120,6 @@ public class ExcelParserCommandHandler : IRequestHandler<ExcelParserCommand>
                             var d = new Department
                             {
                                 Name = value,
-                                Division = user.Division
                             };
                             user.Department = d;
                             hashDepartment.Add(value, d);
@@ -133,15 +129,28 @@ public class ExcelParserCommandHandler : IRequestHandler<ExcelParserCommand>
                             user.Department = hashDepartment[value];
                         }
 
-                        if (hashLocation[user.Location.Name].Departments == null)
+                        if (user.Division != null)
                         {
-                            hashLocation[user.Location.Name].Departments = new List<Department> { user.Department };
+                            if (hashDivision[user.Division.Name].Departments == null)
+                            {
+                                hashDivision[user.Division.Name].Departments = new List<Department> { hashDepartment[user.Department.Name] };
+                            }
+                            else
+                            {
+                                hashDivision[user.Division.Name].Departments.Add(hashDepartment[user.Department.Name]);
+                            }
                         }
                         else
                         {
-                            hashLocation[user.Location.Name].Departments.Add(user.Department);
+                            if (hashLocation[user.Location.Name].Departments == null)
+                            {
+                                hashLocation[user.Location.Name].Departments = new List<Department> { user.Department };
+                            }
+                            else
+                            {
+                                hashLocation[user.Location.Name].Departments.Add(user.Department);
+                            }
                         }
-                        user.Department.Locations.Add(hashLocation[user.Location.Name]);
                         break;
                     case 'F':
                         if (!hashGroup.ContainsKey(value))
@@ -149,8 +158,8 @@ public class ExcelParserCommandHandler : IRequestHandler<ExcelParserCommand>
                             var group = new Group
                             {
                                 Name = value,
-                                Department = user.Department
                             };
+
                             user.Group = group;
                             hashGroup.Add(value, group);
                         }
@@ -159,15 +168,42 @@ public class ExcelParserCommandHandler : IRequestHandler<ExcelParserCommand>
                             user.Group = hashGroup[value];
                         }
 
-                        if (hashLocation[user.Location.Name].Groups == null)
+                        if (user.Department == null && user.Division == null)
                         {
-                            hashLocation[user.Location.Name].Groups = new List<Group> { user.Group };
+                            if (hashLocation[user.Location.Name].Groups == null)
+                            {
+                                hashLocation[user.Location.Name].Groups = new List<Group> { user.Group };
+                            }
+                            else
+                            {
+                                hashLocation[user.Location.Name].Groups.Add(user.Group);
+                            }
                         }
                         else
                         {
-                            hashLocation[user.Location.Name].Groups.Add(user.Group);
+                            if (user.Department == null && user.Division != null)
+                            {
+                                if (hashDivision[user.Division.Name].Groups == null)
+                                {
+                                    hashDivision[user.Division.Name].Groups = new List<Group> { user.Group };
+                                }
+                                else
+                                {
+                                    hashDivision[user.Division.Name].Groups.Add(user.Group);
+                                }
+                            }
+                            else
+                            {
+                                if (hashDepartment[user.Department.Name].Groups == null)
+                                {
+                                    hashDepartment[user.Department.Name].Groups = new List<Group> { user.Group };
+                                }
+                                else
+                                {
+                                    hashDepartment[user.Department.Name].Groups.Add(user.Group);
+                                }
+                            }
                         }
-                        user.Group.Locations.Add(hashLocation[user.Location.Name]);
                         break;
                 }
             }

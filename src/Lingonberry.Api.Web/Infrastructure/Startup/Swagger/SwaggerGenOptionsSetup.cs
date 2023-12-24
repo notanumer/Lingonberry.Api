@@ -28,8 +28,7 @@ internal class SwaggerGenOptionsSetup
             Description = "API documentation for the project.",
             Contact = new OpenApiContact
             {
-                Name = "Saritasa",
-                Email = "team@saritasa.com"
+                Name = "Брусника"
             }
         });
         options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

@@ -1,9 +1,10 @@
 ﻿using Lingonberry.Api.UseCases.Employee.GetEmployeesByCity;
 using Lingonberry.Api.UseCases.Employee.GetEmployeesFormTable;
-using Lingonberry.Api.UseCases.Employee.GetStructureFilters;
+using Lingonberry.Api.UseCases.Employee.GetDivisionsNames;
+using Lingonberry.Api.UseCases.Employee.GetDepartmentsNames;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using Lingonberry.Api.UseCases.Employee.GetLocationsNames;
 
 namespace Lingonberry.Api.Web.Controllers;
 
@@ -36,8 +37,34 @@ public class EmployeeController : ControllerBase
         return await mediator.Send(query);
     }
 
-    [HttpGet("getStructureFilters")]
-    public async Task<GetStructureFiltersQueryResult> GetStructureFilters([FromQuery] GetStructureFiltersQuery query)
+    /// <summary>
+    /// Get divisions names by location.
+    /// </summary>
+    /// <returns>Divisons names collection.</returns>
+    [HttpGet("locations-names")]
+    public async Task<ICollection<string>> GetLocationsNames()
+        => await mediator.Send(new GetLocationsNamesQuery());
+
+    /// <summary>
+    /// Get divisions names.
+    /// May filtered by location name.
+    /// </summary>
+    /// <param name="query">Request query.</param>
+    /// <returns>Divisons names collection.</returns>
+    [HttpGet("divisions-names")]
+    public async Task<GetDivisionsNamesQueryResult> GetDivisionsByLocation([FromQuery] GetDivisionsNamesQuery query)
+    {
+        return await mediator.Send(query);
+    }
+
+    /// <summary>
+    /// Get departments names.
+    /// May filtered by location name or divisions names.
+    /// </summary>
+    /// <param name="query">Request query.</param>
+    /// <returns>Collection of names.</returns>
+    [HttpGet("departments-names")]
+    public async Task<ICollection<string?>> GetDepartments([FromQuery] GetDepartmentsNamesQuery query)
     {
         return await mediator.Send(query);
     }
