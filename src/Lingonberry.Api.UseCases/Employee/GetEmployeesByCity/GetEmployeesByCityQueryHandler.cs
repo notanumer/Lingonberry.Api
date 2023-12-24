@@ -197,7 +197,7 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                     }
                     if (contents.Any())
                     {
-                        contentDep.Next.AddRange(contents);
+                        contentDep.Next.AddRange(contents.OrderByDescending(c => c.UserCount));
                     }
 
                     contentDiv.Next.Add(contentDep);
@@ -280,6 +280,8 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                 }
             }
 
+            contentDiv.Next = contentDiv.Next.OrderByDescending(c => c.UserCount).ToList();
+
             if (contentDiv.Name == null)
             {
                 var listDiv = contentDiv.Next;
@@ -296,6 +298,8 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
                 result.Next.Add(contentDiv);
             }
         }
+
+        result.Next = result.Next.OrderByDescending(u => u.UserCount).ToList();
 
         return result;
     }

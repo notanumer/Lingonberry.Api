@@ -46,6 +46,6 @@ public class GetLocationDataQueryHandler : IRequestHandler<GetLocationDataQuery,
             .ProjectTo<GetLocationDataDto>(mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
 
-        return [.. divisions, .. departments, .. groups];
+        return divisions.Concat(groups).Concat(departments).ToList();
     }
 }
