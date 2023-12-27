@@ -54,7 +54,7 @@ public class StructureController
     /// </summary>
     /// <param name="query">GetDivisionByLocationQuery.</param>
     /// <returns>LocationDto.</returns>
-    [HttpGet("getDivisionByLocation")]
+    [HttpGet("location-data")]
     public async Task<ICollection<GetLocationDataDto>> GetLocationData([FromQuery] GetLocationDataQuery query)
     {
         return await mediator.Send(query);
