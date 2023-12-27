@@ -119,7 +119,6 @@ public class GetEmployeesFormTableQueryHandler : IRequestHandler<GetEmployeesFor
         {
             result.Users.Add(new UserDetailsDto
             {
-                Id = user.Id,
                 FullName = user.FullName,
                 UserNumber = user.UserNumber,
                 LegalEntity = "БСЗ",
@@ -127,7 +126,7 @@ public class GetEmployeesFormTableQueryHandler : IRequestHandler<GetEmployeesFor
                 Division = user.Division != null ? user.Division.Name : "",
                 Department = user.Department != null ? user.Department.Name : "",
                 Group = user.Group != null ? user.Group.Name : "",
-                Position = DisplayEnum.GetValueFromEnum(user.UserPosition),
+                Position = user.Position,
                 WorkType = DisplayEnum.GetValueFromEnum(user.WorkType)
             });
         }

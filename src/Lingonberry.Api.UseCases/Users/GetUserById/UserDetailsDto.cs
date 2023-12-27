@@ -28,7 +28,7 @@ public class UserDetailsDto
     /// <summary>
     /// User position in company.
     /// </summary>
-    required public string Position { get; set; }
+    public string? Position { get; set; }
 
     /// <summary>
     /// Is user vacancy.
