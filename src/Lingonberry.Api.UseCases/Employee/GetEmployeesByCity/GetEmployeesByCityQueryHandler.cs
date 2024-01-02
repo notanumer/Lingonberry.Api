@@ -38,7 +38,7 @@ public class GetEmployeesByCityQueryHandler : IRequestHandler<GetEmployeesByCity
             .Include(u => u.Department)
             .Include(u => u.Group);
 
-        var employerValue = new List<PositionValue>() { PositionValue.Chief, PositionValue.Director };
+        var employerValue = new List<PositionValue>() { PositionValue.Head, PositionValue.Director };
         var userWithoutVacancy = usersByCity.Where(x => !x.IsVacancy).ToList();
         var vacancyCount = usersByCity.Count() - userWithoutVacancy.Count;
         var userCount = userWithoutVacancy.Count;
