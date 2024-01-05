@@ -46,10 +46,10 @@ public class GetEmployeesByCityResult
     /// <summary>
     /// Employer.
     /// </summary>
-    public ICollection<ShortUser>? Employers { get; set; }
+    public ICollection<ShortUser> Employers { get; set; } = new List<ShortUser>();
 
     /// <summary>
     /// Employees.
     /// </summary>
-    public ICollection<ShortUser>? Employees { get; set; }
+    public ICollection<ShortUser> Employees { get; set; } = new List<ShortUser>();
 }
