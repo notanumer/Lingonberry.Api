@@ -18,7 +18,7 @@ public class UserDetailsDto
     /// <summary>
     /// User email.
     /// </summary>
-    required public string Email { get; set; }
+    public string? Email { get; set; }
 
     /// <summary>
     /// Phone number.
@@ -28,7 +28,7 @@ public class UserDetailsDto
     /// <summary>
     /// User position in company.
     /// </summary>
-    required public string Position { get; set; }
+    public string? Position { get; set; }
 
     /// <summary>
     /// Is user vacancy.
@@ -49,4 +49,24 @@ public class UserDetailsDto
     /// User location.
     /// </summary>
     public string? Location { get; set; }
+
+    /// <summary>
+    /// Division.
+    /// </summary>
+    public string? Division { get; init; }
+
+    /// <summary>
+    /// Department.
+    /// </summary>
+    public string? Department { get; init; }
+
+    /// <summary>
+    /// Group.
+    /// </summary>
+    public string? Group { get; init; }
+
+    /// <summary>
+    /// Legal entity.
+    /// </summary>
+    public string? LegalEntity { get; init; }
 }

@@ -1,4 +1,6 @@
-﻿namespace Lingonberry.Api.UseCases.Employee.GetEmployeesFormTable;
+﻿using Lingonberry.Api.UseCases.Users.GetUserById;
+
+namespace Lingonberry.Api.UseCases.Employee.GetEmployeesFormTable;
 
 /// <summary>
 /// Get employees form table result
@@ -8,7 +10,7 @@ public class GetEmployeesFormTableResult
     /// <summary>
     /// Result users.
     /// </summary>
-    public List<UserDto> Users { get; set; } = new();
+    public List<UserDetailsDto> Users { get; set; } = new();
 
     /// <summary>
     /// Page.

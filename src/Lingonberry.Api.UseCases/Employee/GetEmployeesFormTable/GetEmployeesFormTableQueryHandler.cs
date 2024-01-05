@@ -1,5 +1,7 @@
 ﻿using Lingonberry.Api.Domain.Locations.Helpers;
 using Lingonberry.Api.Infrastructure.Abstractions.Interfaces;
+using Lingonberry.Api.UseCases.Handlers;
+using Lingonberry.Api.UseCases.Users.GetUserById;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -115,7 +117,7 @@ public class GetEmployeesFormTableQueryHandler : IRequestHandler<GetEmployeesFor
 
         foreach (var user in usersPaged)
         {
-            result.Users.Add(new UserDto
+            result.Users.Add(new UserDetailsDto
             {
                 FullName = user.FullName,
                 UserNumber = user.UserNumber,
@@ -124,8 +126,8 @@ public class GetEmployeesFormTableQueryHandler : IRequestHandler<GetEmployeesFor
                 Division = user.Division != null ? user.Division.Name : "",
                 Department = user.Department != null ? user.Department.Name : "",
                 Group = user.Group != null ? user.Group.Name : "",
-                Position = user.UserPosition,
-                WorkType = user.WorkType
+                Position = user.Position,
+                WorkType = DisplayEnum.GetValueFromEnum(user.WorkType)
             });
         }
 
