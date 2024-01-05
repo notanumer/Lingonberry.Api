@@ -65,7 +65,10 @@ public class CreateUser
             UserName = Email,
             EmailConfirmed = true,
             FirstName = FirstName,
-            LastName = LastName
+            LastName = LastName,
+            UserPosition = PositionValue.Admin,
+            UserPositionName = "Admin",
+            UserNumber = "admin"
         };
         var result = await userManager.CreateAsync(user, Password);
         logger.LogInformation($"User creation result: {result}.");

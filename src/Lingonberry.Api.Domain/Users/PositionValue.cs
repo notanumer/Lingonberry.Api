@@ -11,6 +11,12 @@ public enum PositionValue
     /// <summary>
     /// Специалист.
     /// </summary>
+    [Display(Name = "Admin")]
+    Admin = 0,
+
+    /// <summary>
+    /// Специалист.
+    /// </summary>
     [Display(Name = "Специалист")]
     Specialist = 1,
 
