@@ -24,6 +24,16 @@ public class GetUserStructureResult
     public StructureEnum? StructureEnum { get; set; }
 
     /// <summary>
+    /// User count.
+    /// </summary>
+    public int UserCount { get; set; }
+
+    /// <summary>
+    /// Vacancy count.
+    /// </summary>
+    public int VacancyCount { get; set; }
+
+    /// <summary>
     /// Is display.
     /// </summary>
     public bool IsDisplay { get; set; } = true;
@@ -31,7 +41,7 @@ public class GetUserStructureResult
     /// <summary>
     /// Next content.
     /// </summary>
-    public GetUserStructureResult? Next { get; set; }
+    public List<GetUserStructureResult> Next { get; set; } = new();
 
     /// <summary>
     /// Employer.

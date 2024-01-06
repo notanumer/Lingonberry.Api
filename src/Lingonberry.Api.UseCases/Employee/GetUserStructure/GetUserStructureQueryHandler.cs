@@ -33,41 +33,51 @@ internal class GetUserStructureQueryHandler : IRequestHandler<GetUserStructureQu
             .GetAsync(u => u.Id == request.UserId, cancellationToken: cancellationToken);
 
         var result = new GetUserStructureResult();
-        var inserter = result;
+        var inserter = new List<GetUserStructureResult>();
 
         var employerValue = new List<PositionValue>() { PositionValue.Head, PositionValue.Director };
 
-        inserter.Name = user.Location!.Name;
-        inserter.StructureEnum = StructureEnum.Location;
-        inserter.Next = new GetUserStructureResult();
-        inserter = inserter.Next;
+        result.Name = user.Location!.Name;
+        result.StructureEnum = StructureEnum.Location;
+        result.Id = user.LocationId;
 
         if (user.Division != null)
         {
-            inserter.Name = user.Division.Name;
-            inserter.Id = user.DivisionId;
-            inserter.StructureEnum = StructureEnum.Division;
-            inserter.Next = new GetUserStructureResult();
-            inserter = inserter.Next;
+            inserter = result.Next;
+            var div = new GetUserStructureResult
+            {
+                Name = user.Division.Name, Id = user.DivisionId, StructureEnum = StructureEnum.Division
+            };
+            inserter.Add(div);
         }
 
         if (user.Department != null)
         {
-            inserter.Name = user.Department.Name;
-            inserter.Id = user.DepartmentId;
-            inserter.StructureEnum = StructureEnum.Department;
-            inserter.Next = new GetUserStructureResult();
-            inserter = inserter.Next;
+            inserter = inserter.FirstOrDefault() != null ? inserter.FirstOrDefault()!.Next : result.Next;
+            var dep = new GetUserStructureResult
+            {
+                Name = user.Department.Name, Id = user.DepartmentId, StructureEnum = StructureEnum.Department
+            };
+            inserter.Add(dep);
         }
 
         if (user.Group != null)
         {
-            inserter.Name = user.Group.Name;
-            inserter.Id = user.GroupId;
-            inserter.StructureEnum = StructureEnum.Group;
+            inserter = inserter.FirstOrDefault() != null ? inserter.FirstOrDefault()!.Next : result.Next;
+            var group = new GetUserStructureResult
+            {
+                Name = user.Group.Name, Id = user.GroupId, StructureEnum = StructureEnum.Group
+            };
+            inserter.Add(group);
         }
 
-        switch (inserter.StructureEnum)
+        var structure = inserter.FirstOrDefault();
+        if (structure == null)
+        {
+            return result;
+        }
+
+        switch (structure.StructureEnum)
         {
             case StructureEnum.Division:
                 var division = await appDbContext.Divisions
@@ -79,10 +89,10 @@ internal class GetUserStructureQueryHandler : IRequestHandler<GetUserStructureQu
                     .Select(u => mapper.Map<ShortUser>(u))
                     .GroupBy(x => employerValue
                         .Contains(x.UserPosition)).ToList();
-                inserter.Employers = employerDiv.Where(x => x.Key)
+                structure.Employers = employerDiv.Where(x => x.Key)
                     .Select(x => x.ToList())
                     .FirstOrDefault() ?? new List<ShortUser>();
-                inserter.Employees = employerDiv.Where(x => !x.Key)
+                structure.Employees = employerDiv.Where(x => !x.Key)
                     .Select(x => x.ToList())
                     .FirstOrDefault() ?? new List<ShortUser>();
                 break;
@@ -96,10 +106,10 @@ internal class GetUserStructureQueryHandler : IRequestHandler<GetUserStructureQu
                     .Select(u => mapper.Map<ShortUser>(u))
                     .GroupBy(x => employerValue
                         .Contains(x.UserPosition)).ToList();
-                inserter.Employers = employerDep.Where(x => x.Key)
+                structure.Employers = employerDep.Where(x => x.Key)
                     .Select(x => x.ToList())
                     .FirstOrDefault() ?? new List<ShortUser>();
-                inserter.Employees = employerDep.Where(x => !x.Key)
+                structure.Employees = employerDep.Where(x => !x.Key)
                     .Select(x => x.ToList())
                     .FirstOrDefault() ?? new List<ShortUser>();
                 break;
@@ -113,10 +123,10 @@ internal class GetUserStructureQueryHandler : IRequestHandler<GetUserStructureQu
                     .Select(u => mapper.Map<ShortUser>(u))
                     .GroupBy(x => employerValue
                         .Contains(x.UserPosition)).ToList();
-                inserter.Employers = employerGroup.Where(x => x.Key)
+                structure.Employers = employerGroup.Where(x => x.Key)
                     .Select(x => x.ToList())
                     .FirstOrDefault() ?? new List<ShortUser>();
-                inserter.Employees = employerGroup.Where(x => !x.Key)
+                structure.Employees = employerGroup.Where(x => !x.Key)
                     .Select(x => x.ToList())
                     .FirstOrDefault() ?? new List<ShortUser>();
                 break;
