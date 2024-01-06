@@ -5,6 +5,7 @@ using Lingonberry.Api.UseCases.Employee.GetDepartmentsNames;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Lingonberry.Api.UseCases.Employee.GetLocationsNames;
+using Lingonberry.Api.UseCases.Employee.GetUserStructure;
 
 namespace Lingonberry.Api.Web.Controllers;
 
@@ -65,6 +66,17 @@ public class EmployeeController : ControllerBase
     /// <returns>Collection of names.</returns>
     [HttpGet("departments-names")]
     public async Task<ICollection<string?>> GetDepartments([FromQuery] GetDepartmentsNamesQuery query)
+    {
+        return await mediator.Send(query);
+    }
+
+    /// <summary>
+    /// Get user structure.
+    /// </summary>
+    /// <param name="query">Request query.</param>
+    /// <returns>GetUserStructureResult.</returns>
+    [HttpGet("user-structure")]
+    public async Task<GetUserStructureResult> GetUserStructure([FromQuery] GetUserStructureQuery query)
     {
         return await mediator.Send(query);
     }
