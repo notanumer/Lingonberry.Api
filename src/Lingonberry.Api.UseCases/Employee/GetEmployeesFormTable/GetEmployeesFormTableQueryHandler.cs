@@ -126,6 +126,7 @@ public class GetEmployeesFormTableQueryHandler : IRequestHandler<GetEmployeesFor
         {
             result.Items.Add(new UserDetailsDto
             {
+                Id = user.Id,
                 FullName = user.FullName,
                 UserNumber = user.UserNumber,
                 LegalEntity = "БСЗ",
