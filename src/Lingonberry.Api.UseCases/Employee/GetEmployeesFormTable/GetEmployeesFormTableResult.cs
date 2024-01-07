@@ -10,10 +10,15 @@ public class GetEmployeesFormTableResult
     /// <summary>
     /// Result users.
     /// </summary>
-    public List<UserDetailsDto> Users { get; set; } = new();
+    public ICollection<UserDetailsDto> Items { get; set; } = new List<UserDetailsDto>();
 
     /// <summary>
     /// Page.
     /// </summary>
     required public int Page { get; set; }
+
+    /// <summary>
+    /// Total count of items.
+    /// </summary>
+    public int Total { get; set; }
 }

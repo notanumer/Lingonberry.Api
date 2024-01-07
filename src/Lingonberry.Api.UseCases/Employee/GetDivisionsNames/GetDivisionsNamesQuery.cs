@@ -5,7 +5,7 @@ namespace Lingonberry.Api.UseCases.Employee.GetDivisionsNames;
 /// <summary>
 /// Get structure filters query.
 /// </summary>
-public class GetDivisionsNamesQuery : IRequest<GetDivisionsNamesQueryResult>
+public class GetDivisionsNamesQuery : IRequest<ICollection<string>>
 {
     /// <summary>
     /// Name of location.

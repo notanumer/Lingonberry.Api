@@ -14,7 +14,7 @@ public record GetDepartmentsNamesQuery : IRequest<ICollection<string?>>
     public string? LocationName { get; init; }
 
     /// <summary>
-    /// Names of divisions.
+    /// Name of division in location.
     /// </summary>
-    public ICollection<string?> DivisonNames { get; init; } = new List<string?>();
+    public string? DivisonName { get; init; }
 }

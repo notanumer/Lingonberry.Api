@@ -60,4 +60,9 @@ public class GetEmployeesFormTableQuery : IRequest<GetEmployeesFormTableResult>
     /// Filter work type.
     /// </summary>
     public SortOrder? WorkType { get; init; }
+
+    /// <summary>
+    /// User's full name.
+    /// </summary>
+    public string? UserFullName { get; init; }
 }

@@ -5,6 +5,8 @@ using Lingonberry.Api.UseCases.Employee.GetDepartmentsNames;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Lingonberry.Api.UseCases.Employee.GetLocationsNames;
+using Lingonberry.Api.UseCases.Employee.GetGroupsNames;
+using Lingonberry.Api.UseCases.Employee.GetUserPositions;
 
 namespace Lingonberry.Api.Web.Controllers;
 
@@ -52,7 +54,7 @@ public class EmployeeController : ControllerBase
     /// <param name="query">Request query.</param>
     /// <returns>Divisons names collection.</returns>
     [HttpGet("divisions-names")]
-    public async Task<GetDivisionsNamesQueryResult> GetDivisionsByLocation([FromQuery] GetDivisionsNamesQuery query)
+    public async Task<ICollection<string>> GetDivisionsByLocation([FromQuery] GetDivisionsNamesQuery query)
     {
         return await mediator.Send(query);
     }
@@ -68,6 +70,24 @@ public class EmployeeController : ControllerBase
     {
         return await mediator.Send(query);
     }
+
+    /// <summary>
+    /// Get groups names.
+    /// </summary>
+    /// <param name="query">Contains selected location, division and department.</param>
+    /// <returns>Collection of names.</returns>
+    [HttpGet("groups-names")]
+    public async Task<ICollection<string?>> GetGroups([FromQuery] GetGroupsNamesQuery query)
+        => await mediator.Send(query);
+
+    /// <summary>
+    /// Get users positions.
+    /// </summary>
+    /// <param name="query">Query to get users positions.</param>
+    /// <returns>Collection of positions names.</returns>
+    [HttpGet("users-positions")]
+    public async Task<ICollection<string?>> GetUsersPositions([FromQuery] GetUserPositionsQuery query)
+        => await mediator.Send(query);
 
     /// <summary>
     /// Rest for get employees form table.

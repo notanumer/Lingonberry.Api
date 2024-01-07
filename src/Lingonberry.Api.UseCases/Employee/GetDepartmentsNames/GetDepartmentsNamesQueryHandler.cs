@@ -21,50 +21,30 @@ internal class GetDepartmentsNamesQueryHandler : IRequestHandler<GetDepartmentsN
     {
         if (!string.IsNullOrEmpty(request.LocationName))
         {
-            var departments = await appDbContext.Departments
-                .AsNoTracking()
-                .Include(d => d.Locations)
-                    .ThenInclude(l => l.Divisions)
-                .Include(d => d.Divisions)
-                .ToListAsync(cancellationToken);
             var location = await appDbContext.Locations
                 .AsNoTracking()
                 .Include(l => l.Divisions)
                 .ThenInclude(d => d.Departments)
+                .Include(l => l.Departments)
                 .FirstOrDefaultAsync(l => l.Name == request.LocationName, cancellationToken);
 
-            var result = new HashSet<string?>();
-            if (request.DivisonNames.Any())
+            if (!string.IsNullOrEmpty(request.DivisonName))
             {
-                foreach (var name in request.DivisonNames)
+                var division = location?.Divisions
+                    .FirstOrDefault(d => d.Name == request.DivisonName);
+                if (division != null)
                 {
-                    foreach (var department in departments)
-                    {
-                        if (department.Divisions!.Any(d => d.Name == name))
-                        {
-                            var division = location!.Divisions.FirstOrDefault(d => d.Name == name);
-                            var divisionDepartment = division!.Departments!.FirstOrDefault(d => d.Name == department.Name);
-                            if (divisionDepartment != null)
-                            {
-                                result.Add(divisionDepartment.Name);
-                            }
-                        }
-                    }
+                    return division.Departments!.Select(d => d.Name).ToList();
                 }
-
+                else
+                {
+                    return new List<string?>();
+                }
             }
             else
             {
-                foreach (var department in departments)
-                {
-                    if (department.Divisions!.Any(d => d.Locations.Any(l => l.Name == request.LocationName))
-                        || department.Locations.Any(l => l.Name == request.LocationName))
-                    {
-                        result.Add(department.Name);
-                    }
-                }
+                return location!.Departments.Select(d => d.Name).ToList();
             }
-            return result;
         }
         else
         {

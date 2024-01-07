@@ -12,7 +12,7 @@ namespace Lingonberry.Api.UseCases.Employee.GetDivisionsNames;
 /// <summary>
 /// Get structure filters handler.
 /// </summary>
-public class GetDivisionsNamesQueryHandler : IRequestHandler<GetDivisionsNamesQuery, GetDivisionsNamesQueryResult>
+public class GetDivisionsNamesQueryHandler : IRequestHandler<GetDivisionsNamesQuery, ICollection<string>>
 {
     private readonly ILogger<GetDivisionsNamesQueryHandler> logger;
     private readonly IAppDbContext dbContext;
@@ -29,7 +29,7 @@ public class GetDivisionsNamesQueryHandler : IRequestHandler<GetDivisionsNamesQu
     }
 
     /// <inheritdoc />
-    public async Task<GetDivisionsNamesQueryResult> Handle(GetDivisionsNamesQuery request, CancellationToken cancellationToken)
+    public async Task<ICollection<string>> Handle(GetDivisionsNamesQuery request, CancellationToken cancellationToken)
     {
         try
         {
@@ -42,21 +42,18 @@ public class GetDivisionsNamesQueryHandler : IRequestHandler<GetDivisionsNamesQu
             }
             else
             {
-                divisions = dbContext.Locations
-                    .SelectMany(l => l.Divisions);
+                divisions = dbContext.Divisions;
             }
 
-            return new GetDivisionsNamesQueryResult
-            {
-                Divisions = await divisions
+            return await divisions
                     .ProjectTo<GetDivisionsNamesDto>(mapper.ConfigurationProvider)
-                    .ToListAsync(cancellationToken)
-            };
+                    .Select(l => l.Name)
+                    .ToListAsync(cancellationToken);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error on getting divisions by location name {LocationName}", request.LocationName);
-            return new GetDivisionsNamesQueryResult();
+            return new List<string>();
         }
     }
 }

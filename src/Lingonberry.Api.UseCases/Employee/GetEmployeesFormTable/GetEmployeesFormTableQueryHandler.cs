@@ -26,9 +26,8 @@ public class GetEmployeesFormTableQueryHandler : IRequestHandler<GetEmployeesFor
         this.dbContext = dbContext;
     }
 
-
     /// <inheritdoc />
-    public async Task<GetEmployeesFormTableResult> Handle(GetEmployeesFormTableQuery request, CancellationToken cancellationToken)
+    public Task<GetEmployeesFormTableResult> Handle(GetEmployeesFormTableQuery request, CancellationToken cancellationToken)
     {
         var users = dbContext.Users
             .Include(u => u.Location)
@@ -37,6 +36,11 @@ public class GetEmployeesFormTableQueryHandler : IRequestHandler<GetEmployeesFor
             .Include(u => u.Group)
             .OrderBy(u => u.Location!.Name)
             .Where(u => !u.IsVacancy);
+
+        if (!string.IsNullOrEmpty(request.UserFullName))
+        {
+            users = users.Where(u => u.FullName.Contains(request.UserFullName));
+        }
 
         if (request.LocationName != null)
         {
@@ -113,11 +117,11 @@ public class GetEmployeesFormTableQueryHandler : IRequestHandler<GetEmployeesFor
         var usersPaged = PagedListFactory.FromSource(users,
             page: request.Page, pageSize: request.PageSize);
 
-        var result = new GetEmployeesFormTableResult() { Page = request.Page };
+        var result = new GetEmployeesFormTableResult() { Page = request.Page, Total = usersPaged.TotalCount };
 
         foreach (var user in usersPaged)
         {
-            result.Users.Add(new UserDetailsDto
+            result.Items.Add(new UserDetailsDto
             {
                 FullName = user.FullName,
                 UserNumber = user.UserNumber,
@@ -131,6 +135,6 @@ public class GetEmployeesFormTableQueryHandler : IRequestHandler<GetEmployeesFor
             });
         }
 
-        return result;
+        return Task.FromResult(result);
     }
 }
