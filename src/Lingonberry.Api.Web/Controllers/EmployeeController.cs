@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Lingonberry.Api.UseCases.Employee.GetLocationsNames;
 using Lingonberry.Api.UseCases.Employee.GetGroupsNames;
 using Lingonberry.Api.UseCases.Employee.GetUserPositions;
+using Lingonberry.Api.UseCases.Employee.GetUserStructure;
 
 namespace Lingonberry.Api.Web.Controllers;
 
@@ -88,6 +89,17 @@ public class EmployeeController : ControllerBase
     [HttpGet("users-positions")]
     public async Task<ICollection<string?>> GetUsersPositions([FromQuery] GetUserPositionsQuery query)
         => await mediator.Send(query);
+        
+    /// <summary>        
+    /// Get user structure.
+    /// </summary>
+    /// <param name="query">Request query.</param>
+    /// <returns>GetUserStructureResult.</returns>
+    [HttpGet("user-structure")]
+    public async Task<GetUserStructureResult> GetUserStructure([FromQuery] GetUserStructureQuery query)
+    {
+        return await mediator.Send(query);
+    }
 
     /// <summary>
     /// Rest for get employees form table.

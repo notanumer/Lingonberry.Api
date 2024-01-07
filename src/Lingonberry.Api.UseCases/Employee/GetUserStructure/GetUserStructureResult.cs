@@ -1,12 +1,12 @@
 ﻿using Lingonberry.Api.Domain.Locations.Helpers;
 using Lingonberry.Api.UseCases.Employee.Common;
 
-namespace Lingonberry.Api.UseCases.Employee.GetEmployeesByCity;
+namespace Lingonberry.Api.UseCases.Employee.GetUserStructure;
 
 /// <summary>
-/// Get employees by city result.
+/// Result user structure.
 /// </summary>
-public class GetEmployeesByCityResult
+public class GetUserStructureResult
 {
     /// <summary>
     /// Id.
@@ -36,12 +36,12 @@ public class GetEmployeesByCityResult
     /// <summary>
     /// Is display.
     /// </summary>
-    public bool IsDisplay { get; set; }
+    public bool IsDisplay { get; set; } = true;
 
     /// <summary>
     /// Next content.
     /// </summary>
-    public List<GetEmployeesByCityResult> Next { get; set; } = new();
+    public List<GetUserStructureResult> Next { get; set; } = new();
 
     /// <summary>
     /// Employer.
