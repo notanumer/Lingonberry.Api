@@ -89,8 +89,8 @@ public class EmployeeController : ControllerBase
     [HttpGet("users-positions")]
     public async Task<ICollection<string?>> GetUsersPositions([FromQuery] GetUserPositionsQuery query)
         => await mediator.Send(query);
-        
-    /// <summary>        
+
+    /// <summary>
     /// Get user structure.
     /// </summary>
     /// <param name="query">Request query.</param>
