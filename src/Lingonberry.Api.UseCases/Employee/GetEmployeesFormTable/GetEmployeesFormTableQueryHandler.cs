@@ -1,4 +1,5 @@
-﻿using Lingonberry.Api.Domain.Locations.Helpers;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
+using Lingonberry.Api.Domain.Locations.Helpers;
 using Lingonberry.Api.Infrastructure.Abstractions.Interfaces;
 using Lingonberry.Api.UseCases.Handlers;
 using Lingonberry.Api.UseCases.Users.GetUserById;
@@ -6,6 +7,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Saritasa.Tools.Common.Pagination;
+using Saritasa.Tools.Common.Utils;
 
 namespace Lingonberry.Api.UseCases.Employee.GetEmployeesFormTable;
 
@@ -27,7 +29,7 @@ public class GetEmployeesFormTableQueryHandler : IRequestHandler<GetEmployeesFor
     }
 
     /// <inheritdoc />
-    public Task<GetEmployeesFormTableResult> Handle(GetEmployeesFormTableQuery request, CancellationToken cancellationToken)
+    public async Task<GetEmployeesFormTableResult> Handle(GetEmployeesFormTableQuery request, CancellationToken cancellationToken)
     {
         var users = dbContext.Users
             .Include(u => u.Location)
@@ -36,11 +38,6 @@ public class GetEmployeesFormTableQueryHandler : IRequestHandler<GetEmployeesFor
             .Include(u => u.Group)
             .OrderBy(u => u.Location!.Name)
             .Where(u => !u.IsVacancy);
-
-        if (!string.IsNullOrEmpty(request.UserFullName))
-        {
-            users = users.Where(u => u.FullName.Contains(request.UserFullName));
-        }
 
         if (request.LocationName != null)
         {
@@ -114,7 +111,13 @@ public class GetEmployeesFormTableQueryHandler : IRequestHandler<GetEmployeesFor
             }
         }
 
-        var usersPaged = PagedListFactory.FromSource(users,
+        var selectedUsers = await users.ToListAsync(cancellationToken);
+        if (!string.IsNullOrEmpty(request.UserFullName))
+        {
+            selectedUsers = selectedUsers.Where(u => u.FullName.ToLower().Equals(request.UserFullName.ToLower())).ToList();
+        }
+
+        var usersPaged = PagedListFactory.FromSource(selectedUsers,
             page: request.Page, pageSize: request.PageSize);
 
         var result = new GetEmployeesFormTableResult() { Page = request.Page, Total = usersPaged.TotalCount };
@@ -135,6 +138,6 @@ public class GetEmployeesFormTableQueryHandler : IRequestHandler<GetEmployeesFor
             });
         }
 
-        return Task.FromResult(result);
+        return result;
     }
 }
