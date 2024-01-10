@@ -8,6 +8,7 @@ using Lingonberry.Api.UseCases.Employee.GetLocationsNames;
 using Lingonberry.Api.UseCases.Employee.GetGroupsNames;
 using Lingonberry.Api.UseCases.Employee.GetUserPositions;
 using Lingonberry.Api.UseCases.Employee.GetUserStructure;
+using Lingonberry.Api.UseCases.Employee.GetUsersWorkTypes;
 
 namespace Lingonberry.Api.Web.Controllers;
 
@@ -88,6 +89,15 @@ public class EmployeeController : ControllerBase
     /// <returns>Collection of positions names.</returns>
     [HttpGet("users-positions")]
     public async Task<ICollection<string?>> GetUsersPositions([FromQuery] GetUserPositionsQuery query)
+        => await mediator.Send(query);
+
+    /// <summary>
+    /// Get users worktypes.
+    /// </summary>
+    /// <param name="query">Filters.</param>
+    /// <returns>Collection of worktypes names.</returns>
+    [HttpGet("users-worktypes")]
+    public async Task<ICollection<string>> GetUsersWorkTypes([FromQuery] GetUsersWorkTypesQuery query)
         => await mediator.Send(query);
 
     /// <summary>

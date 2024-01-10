@@ -1,18 +1,19 @@
 ﻿using Lingonberry.Api.Infrastructure.Abstractions.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Saritasa.Tools.Common.Utils;
 
-namespace Lingonberry.Api.UseCases.Employee.GetUserPositions;
+namespace Lingonberry.Api.UseCases.Employee.GetUsersWorkTypes;
 
 /// <summary>
-/// Handler for <see cref="GetUserPositionsQuery"/>.
+/// Handler for <see cref="GetUsersWorkTypesQuery"/>.
 /// </summary>
-internal class GetUserPositionsQueryHandler(IAppDbContext appDbContext) : IRequestHandler<GetUserPositionsQuery, ICollection<string?>>
+internal class GetUsersWorkTypesQueryHandler(IAppDbContext appDbContext) : IRequestHandler<GetUsersWorkTypesQuery, ICollection<string>>
 {
     private readonly IAppDbContext appDbContext = appDbContext;
 
     /// <inheritdoc/>
-    public async Task<ICollection<string?>> Handle(GetUserPositionsQuery request, CancellationToken cancellationToken)
+    public async Task<ICollection<string>> Handle(GetUsersWorkTypesQuery request, CancellationToken cancellationToken)
     {
         var users = appDbContext.Users.AsNoTracking();
 
@@ -32,8 +33,13 @@ internal class GetUserPositionsQueryHandler(IAppDbContext appDbContext) : IReque
         {
             users = users.Where(u => u.Group!.Name == request.GroupName);
         }
-        var userPositions = await users.Select(u => u.Position).Distinct().ToListAsync(cancellationToken);
-        userPositions.RemoveAll(string.IsNullOrEmpty);
-        return userPositions;
+        if (!string.IsNullOrEmpty(request.PositionName))
+        {
+            users = users.Where(u => u.UserPositionName == request.PositionName);
+        }
+
+        var userPositions = await users.Select(u => u.WorkType).Where(w => w != 0).Distinct().ToListAsync(cancellationToken);
+
+        return userPositions.Select(u => EnumUtils.GetDescription(u)).ToList();
     }
 }

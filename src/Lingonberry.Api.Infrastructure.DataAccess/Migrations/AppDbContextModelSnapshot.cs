@@ -34,7 +34,7 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
 
                     b.HasIndex("DivisionsId");
 
-                    b.ToTable("DepartmentDivision");
+                    b.ToTable("DepartmentDivision", (string)null);
                 });
 
             modelBuilder.Entity("DepartmentGroup", b =>
@@ -49,7 +49,7 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
 
                     b.HasIndex("GroupsId");
 
-                    b.ToTable("DepartmentGroup");
+                    b.ToTable("DepartmentGroup", (string)null);
                 });
 
             modelBuilder.Entity("DepartmentLocation", b =>
@@ -64,7 +64,7 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
 
                     b.HasIndex("LocationsId");
 
-                    b.ToTable("DepartmentLocation");
+                    b.ToTable("DepartmentLocation", (string)null);
                 });
 
             modelBuilder.Entity("DivisionGroup", b =>
@@ -79,7 +79,7 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
 
                     b.HasIndex("GroupsId");
 
-                    b.ToTable("DivisionGroup");
+                    b.ToTable("DivisionGroup", (string)null);
                 });
 
             modelBuilder.Entity("DivisionLocation", b =>
@@ -94,7 +94,7 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
 
                     b.HasIndex("LocationsId");
 
-                    b.ToTable("DivisionLocation");
+                    b.ToTable("DivisionLocation", (string)null);
                 });
 
             modelBuilder.Entity("GroupLocation", b =>
@@ -109,7 +109,7 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
 
                     b.HasIndex("LocationsId");
 
-                    b.ToTable("GroupLocation");
+                    b.ToTable("GroupLocation", (string)null);
                 });
 
             modelBuilder.Entity("Lingonberry.Api.Domain.Locations.Department", b =>
@@ -126,7 +126,7 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Departments");
+                    b.ToTable("Departments", (string)null);
                 });
 
             modelBuilder.Entity("Lingonberry.Api.Domain.Locations.Division", b =>
@@ -143,7 +143,7 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Divisions");
+                    b.ToTable("Divisions", (string)null);
                 });
 
             modelBuilder.Entity("Lingonberry.Api.Domain.Locations.Group", b =>
@@ -160,7 +160,7 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Groups");
+                    b.ToTable("Groups", (string)null);
                 });
 
             modelBuilder.Entity("Lingonberry.Api.Domain.Locations.Location", b =>
@@ -178,7 +178,7 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Locations");
+                    b.ToTable("Locations", (string)null);
                 });
 
             modelBuilder.Entity("Lingonberry.Api.Domain.Users.AppIdentityRole", b =>
@@ -395,7 +395,7 @@ namespace Lingonberry.Api.Infrastructure.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DataProtectionKeys");
+                    b.ToTable("DataProtectionKeys", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
