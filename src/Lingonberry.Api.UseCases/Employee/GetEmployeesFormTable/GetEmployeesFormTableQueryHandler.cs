@@ -1,5 +1,5 @@
-﻿using DocumentFormat.OpenXml.Wordprocessing;
-using Lingonberry.Api.Domain.Locations.Helpers;
+﻿using Lingonberry.Api.Domain.Locations.Helpers;
+using Lingonberry.Api.Domain.Users;
 using Lingonberry.Api.Infrastructure.Abstractions.Interfaces;
 using Lingonberry.Api.UseCases.Handlers;
 using Lingonberry.Api.UseCases.Users.GetUserById;
@@ -87,28 +87,12 @@ public class GetEmployeesFormTableQueryHandler : IRequestHandler<GetEmployeesFor
 
         if (request.UserPosition != null)
         {
-            switch (request.UserPosition)
-            {
-                case SortOrder.Ascending:
-                    users = users.OrderBy(u => u.UserPosition);
-                    break;
-                case SortOrder.Descending:
-                    users = users.OrderByDescending(u => u.UserPosition);
-                    break;
-            }
+            users = users.Where(u => u.UserPosition == DisplayEnum.GetValueFromName<PositionValue>(request.UserPosition));
         }
 
         if (request.WorkType != null)
         {
-            switch (request.WorkType)
-            {
-                case SortOrder.Ascending:
-                    users = users.OrderBy(u => u.WorkType);
-                    break;
-                case SortOrder.Descending:
-                    users = users.OrderByDescending(u => u.WorkType);
-                    break;
-            }
+            users = users.Where(u => u.WorkType == DisplayEnum.GetValueFromName<WorkType>(request.WorkType));
         }
 
         var selectedUsers = await users.ToListAsync(cancellationToken);

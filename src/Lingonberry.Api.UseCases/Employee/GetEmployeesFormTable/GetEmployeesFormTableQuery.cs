@@ -54,12 +54,12 @@ public class GetEmployeesFormTableQuery : IRequest<GetEmployeesFormTableResult>
     /// <summary>
     /// Filter user position.
     /// </summary>
-    public SortOrder? UserPosition { get; init; }
+    public string? UserPosition { get; init; }
 
     /// <summary>
     /// Filter work type.
     /// </summary>
-    public SortOrder? WorkType { get; init; }
+    public string? WorkType { get; init; }
 
     /// <summary>
     /// User's full name.
