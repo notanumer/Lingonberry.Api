@@ -1,14 +1,15 @@
-﻿using Lingonberry.Api.UseCases.Employee.GetEmployeesByCity;
-using Lingonberry.Api.UseCases.Employee.GetEmployeesFormTable;
+﻿using Lingonberry.Api.UseCases.Employee.GetDepartmentsNames;
 using Lingonberry.Api.UseCases.Employee.GetDivisionsNames;
-using Lingonberry.Api.UseCases.Employee.GetDepartmentsNames;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Lingonberry.Api.UseCases.Employee.GetLocationsNames;
+using Lingonberry.Api.UseCases.Employee.GetEmployeesByCity;
+using Lingonberry.Api.UseCases.Employee.GetEmployeesFormTable;
 using Lingonberry.Api.UseCases.Employee.GetGroupsNames;
+using Lingonberry.Api.UseCases.Employee.GetLocationsNames;
 using Lingonberry.Api.UseCases.Employee.GetUserPositions;
 using Lingonberry.Api.UseCases.Employee.GetUserStructure;
 using Lingonberry.Api.UseCases.Employee.GetUsersWorkTypes;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Lingonberry.Api.Web.Controllers;
 
@@ -18,6 +19,7 @@ namespace Lingonberry.Api.Web.Controllers;
 [ApiController]
 [Route("api/employee")]
 [ApiExplorerSettings(GroupName = "employee")]
+[Authorize]
 public class EmployeeController : ControllerBase
 {
     private readonly IMediator mediator;
