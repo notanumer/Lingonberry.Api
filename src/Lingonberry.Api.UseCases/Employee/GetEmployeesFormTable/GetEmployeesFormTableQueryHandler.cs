@@ -87,7 +87,8 @@ public class GetEmployeesFormTableQueryHandler : IRequestHandler<GetEmployeesFor
 
         if (request.UserPosition != null)
         {
-            users = users.Where(u => u.UserPosition == DisplayEnum.GetValueFromName<PositionValue>(request.UserPosition));
+            var position = DisplayEnum.GetValueFromName<PositionValue>(request.UserPosition.Split(" ")[0]);
+            users = users.Where(u => u.UserPosition == position);
         }
 
         if (request.WorkType != null)

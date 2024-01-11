@@ -8,9 +8,14 @@ namespace Lingonberry.Api.UseCases.Employee.GetUsersWorkTypes;
 /// <summary>
 /// Handler for <see cref="GetUsersWorkTypesQuery"/>.
 /// </summary>
-internal class GetUsersWorkTypesQueryHandler(IAppDbContext appDbContext) : IRequestHandler<GetUsersWorkTypesQuery, ICollection<string>>
+internal class GetUsersWorkTypesQueryHandler : IRequestHandler<GetUsersWorkTypesQuery, ICollection<string>>
 {
-    private readonly IAppDbContext appDbContext = appDbContext;
+    private readonly IAppDbContext appDbContext;
+
+    public GetUsersWorkTypesQueryHandler(IAppDbContext appDbContext)
+    {
+        this.appDbContext = appDbContext;
+    }
 
     /// <inheritdoc/>
     public async Task<ICollection<string>> Handle(GetUsersWorkTypesQuery request, CancellationToken cancellationToken)
