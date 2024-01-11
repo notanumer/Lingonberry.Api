@@ -7,9 +7,14 @@ namespace Lingonberry.Api.UseCases.Employee.GetUserPositions;
 /// <summary>
 /// Handler for <see cref="GetUserPositionsQuery"/>.
 /// </summary>
-internal class GetUserPositionsQueryHandler(IAppDbContext appDbContext) : IRequestHandler<GetUserPositionsQuery, ICollection<string?>>
+internal class GetUserPositionsQueryHandler : IRequestHandler<GetUserPositionsQuery, ICollection<string?>>
 {
-    private readonly IAppDbContext appDbContext = appDbContext;
+    private readonly IAppDbContext appDbContext;
+
+    public GetUserPositionsQueryHandler(IAppDbContext appDbContext)
+    {
+        this.appDbContext = appDbContext;
+    }
 
     /// <inheritdoc/>
     public async Task<ICollection<string?>> Handle(GetUserPositionsQuery request, CancellationToken cancellationToken)

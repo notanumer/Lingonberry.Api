@@ -13,9 +13,14 @@ namespace Lingonberry.Api.UseCases.Employee.GetGroupsNames;
 /// Constructor.
 /// </remarks>
 /// <param name="appDbContext"></param>
-internal class GetGroupsNamesQueryHandler(IAppDbContext appDbContext) : IRequestHandler<GetGroupsNamesQuery, ICollection<string?>>
+internal class GetGroupsNamesQueryHandler : IRequestHandler<GetGroupsNamesQuery, ICollection<string?>>
 {
-    private readonly IAppDbContext appDbContext = appDbContext;
+    private readonly IAppDbContext appDbContext;
+
+    public GetGroupsNamesQueryHandler(IAppDbContext appDbContext)
+    {
+        this.appDbContext = appDbContext;
+    }
 
     /// <inheritdoc/>
     public async Task<ICollection<string?>> Handle(GetGroupsNamesQuery request, CancellationToken cancellationToken)
