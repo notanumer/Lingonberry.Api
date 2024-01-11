@@ -9,7 +9,7 @@ namespace Lingonberry.Api.Domain.Users;
 public enum PositionValue
 {
     /// <summary>
-    /// Специалист.
+    /// Админ.
     /// </summary>
     [Display(Name = "Admin")]
     Admin = 0,
