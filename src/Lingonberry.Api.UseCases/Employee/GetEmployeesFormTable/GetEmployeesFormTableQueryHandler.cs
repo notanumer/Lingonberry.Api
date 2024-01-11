@@ -135,7 +135,7 @@ public class GetEmployeesFormTableQueryHandler : IRequestHandler<GetEmployeesFor
                 Department = user.Department != null ? user.Department.Name : "",
                 Group = user.Group != null ? user.Group.Name : "",
                 Position = user.Position,
-                WorkType = DisplayEnum.GetValueFromEnum(user.WorkType)
+                WorkType = EnumUtils.GetDescription(user.WorkType)
             });
         }
 
