@@ -92,7 +92,11 @@ public class GetEmployeesFormTableQueryHandler : IRequestHandler<GetEmployeesFor
 
         if (request.WorkType != null)
         {
-            users = users.Where(u => u.WorkType == DisplayEnum.GetValueFromName<WorkType>(request.WorkType));
+            var resultPair = EnumUtils
+                .GetValuesWithDescriptions<WorkType>()
+                .FirstOrDefault(pair => pair.Value == request.WorkType);
+            var type = (WorkType)int.Parse(resultPair.Key);
+            users = users.Where(u => u.WorkType == type);
         }
 
         var selectedUsers = await users.ToListAsync(cancellationToken);
