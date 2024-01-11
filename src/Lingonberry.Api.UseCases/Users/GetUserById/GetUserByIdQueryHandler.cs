@@ -5,6 +5,7 @@ using Lingonberry.Api.Infrastructure.Abstractions.Interfaces;
 using Lingonberry.Api.UseCases.Handlers;
 using Microsoft.EntityFrameworkCore;
 using Saritasa.Tools.EntityFrameworkCore;
+using Saritasa.Tools.Common.Utils;
 
 namespace Lingonberry.Api.UseCases.Users.GetUserById;
 
@@ -44,7 +45,7 @@ internal class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserD
 
         var result = mapper.Map<UserDetailsDto>(user);
         result.Location = user.Location?.Name;
-        result.WorkType = DisplayEnum.GetValueFromEnum(user.WorkType);
+        result.WorkType = EnumUtils.GetDescription(user.WorkType);
         return result;
     }
 }
