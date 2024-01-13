@@ -37,7 +37,7 @@ public class GetEmployeesFormTableQueryHandler : IRequestHandler<GetEmployeesFor
             .Include(u => u.Department)
             .Include(u => u.Group)
             .OrderBy(u => u.Location!.Name)
-            .Where(u => !u.IsVacancy);
+            .Where(u => u.WorkType != 0);
 
         if (request.LocationName != null)
         {

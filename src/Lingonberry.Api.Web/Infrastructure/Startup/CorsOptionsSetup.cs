@@ -32,11 +32,10 @@ internal class CorsOptionsSetup
         options.AddPolicy(CorsPolicyName,
             builder =>
             {
-                builder.AllowAnyOrigin();
                 builder
+                    .AllowAnyOrigin()
                     .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .SetPreflightMaxAge(TimeSpan.FromDays(1));
+                    .AllowAnyMethod();
             });
     }
 }

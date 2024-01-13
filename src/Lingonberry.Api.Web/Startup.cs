@@ -124,7 +124,7 @@ public class Startup
         app.UseRouting();
 
         // CORS.
-        app.UseCors(CorsOptionsSetup.CorsPolicyName);
+        app.UseCors(configuration => configuration.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
         app.UseForwardedHeaders(new ForwardedHeadersOptions
         {
             ForwardedHeaders = ForwardedHeaders.All
